@@ -42,11 +42,11 @@ export function Section({
           </p>
           <h2
             style={{ transitionDelay: "80ms" }}
-            className={`font-display mt-4 text-3xl font-bold leading-tight tracking-tight text-coal transition-all duration-700 ease-out sm:text-[2.5rem] ${
+            className={`font-omori mt-4 text-[2rem] font-normal leading-tight tracking-tight text-coal transition-all duration-700 ease-out sm:text-[2.5rem] ${
               isInView ? shown : hidden
             }`}
           >
-            {title}
+            <span className="text-twitch">{title}</span>
           </h2>
           {description && (
             <p

@@ -156,12 +156,12 @@ export function Hero({ siteProfile }: { siteProfile: SiteProfile }) {
 
             <h1
               style={{ transitionDelay: "90ms" }}
-              className={`font-display mt-6 text-3xl font-bold leading-tight tracking-tight text-coal transition-all duration-700 ease-out sm:text-4xl ${
+              className={`font-omori mt-6 text-[1.62rem] font-normal leading-[1.2] tracking-[0.01em] text-coal transition-all duration-700 ease-out sm:text-[2.6rem] ${
                 isInView ? shown : hidden
               }`}
             >
               Hello, I&apos;m{" "}
-              <span className="text-ember">
+              <span className="text-spasm text-ember">
                 {firstName}
                 {lastName ? ` ${lastName}` : ""}
               </span>

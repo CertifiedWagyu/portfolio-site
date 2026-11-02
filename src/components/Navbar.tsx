@@ -79,7 +79,7 @@ export function Navbar({ name }: { name: string }) {
           <span className="font-display flex h-8 w-8 items-center justify-center rounded-lg bg-coal text-xs font-bold text-parchment">
             {name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
           </span>
-          <span className="font-display hidden text-[15px] font-bold tracking-tight text-coal sm:block">
+          <span className="font-omori-hand hidden text-[18px] font-semibold leading-none tracking-[0.01em] text-coal sm:block">
             {name}
           </span>
         </a>

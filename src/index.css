@@ -2,11 +2,30 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ---- OMORI faces (self-hosted, see public/fonts) ---- */
+@font-face {
+  font-family: "OMORI Scratch";
+  src: url("/fonts/omori-game-a.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "OMORI Hand";
+  src: url("/fonts/omori-game-b.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-heading: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-omori: "OMORI Scratch", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-omori-hand: "OMORI Hand", "Plus Jakarta Sans", system-ui, sans-serif;
 
   /* ---- Public site: neutral slate + indigo accent ---- */
   --color-parchment: #f8f9fb;
@@ -280,6 +299,118 @@
 
 .secret-whisper-dot {
   animation: secret-whisper-dot 1.8s ease-in-out infinite;
+}
+
+/* ---- Horror-game text spasm -------------------------------------------
+   Short, stepped jolts (transform snaps) with a brief red/teal chromatic
+   split, separated by long calm gaps. Applied to the hero name.
+   -------------------------------------------------------------------- */
+.text-spasm {
+  display: inline-block;
+  animation: text-spasm 6.8s steps(1, end) infinite;
+  will-change: transform;
+  transform-origin: center;
+}
+
+@keyframes text-spasm {
+  0%,
+  57.5%,
+  68%,
+  100% {
+    transform: translate3d(0, 0, 0) skewX(0deg);
+    text-shadow: 0 0 0 transparent;
+  }
+  58% {
+    transform: translate3d(-2.5px, 1.5px, 0) skewX(-1.8deg);
+    text-shadow:
+      2.5px 0 0 color-mix(in srgb, var(--color-blood) 80%, transparent),
+      -2.5px 0 0 color-mix(in srgb, var(--color-forest) 70%, transparent);
+  }
+  59.5% {
+    transform: translate3d(2.5px, -1.5px, 0) skewX(1.4deg);
+    text-shadow:
+      -2.5px 0 0 color-mix(in srgb, var(--color-blood) 80%, transparent),
+      2.5px 0 0 color-mix(in srgb, var(--color-forest) 70%, transparent);
+  }
+  61% {
+    transform: translate3d(-1.5px, 0.5px, 0) skewX(-0.9deg);
+    text-shadow:
+      1.5px 0 0 color-mix(in srgb, var(--color-blood) 70%, transparent),
+      -1.5px 0 0 color-mix(in srgb, var(--color-forest) 60%, transparent);
+  }
+  62.5% {
+    transform: translate3d(2px, 1px, 0) skewX(0.7deg);
+    text-shadow:
+      -2px 0 0 color-mix(in srgb, var(--color-blood) 70%, transparent),
+      2px 0 0 color-mix(in srgb, var(--color-forest) 60%, transparent);
+  }
+  64% {
+    transform: translate3d(-1px, -1px, 0) skewX(-0.4deg);
+    text-shadow:
+      1px 0 0 color-mix(in srgb, var(--color-blood) 55%, transparent),
+      -1px 0 0 color-mix(in srgb, var(--color-forest) 45%, transparent);
+  }
+  65.5% {
+    transform: translate3d(1px, 0, 0) skewX(0.3deg);
+    text-shadow:
+      -1px 0 0 color-mix(in srgb, var(--color-blood) 40%, transparent),
+      1px 0 0 color-mix(in srgb, var(--color-forest) 30%, transparent);
+  }
+  /* a small aftershock later in the cycle */
+  86% {
+    transform: translate3d(-1.5px, 0.5px, 0) skewX(-0.8deg);
+    text-shadow:
+      1.5px 0 0 color-mix(in srgb, var(--color-blood) 65%, transparent),
+      -1.5px 0 0 color-mix(in srgb, var(--color-forest) 50%, transparent);
+  }
+  87.5% {
+    transform: translate3d(1px, 0, 0) skewX(0.4deg);
+    text-shadow:
+      -1px 0 0 color-mix(in srgb, var(--color-blood) 45%, transparent),
+      1px 0 0 color-mix(in srgb, var(--color-forest) 35%, transparent);
+  }
+  89% {
+    transform: translate3d(0, 0, 0) skewX(0deg);
+    text-shadow: 0 0 0 transparent;
+  }
+}
+
+/* Rarer, gentler twitch for section headings. */
+.text-twitch {
+  display: inline-block;
+  animation: text-twitch 11s steps(1, end) infinite;
+  transform-origin: center;
+}
+
+@keyframes text-twitch {
+  0%,
+  71%,
+  76%,
+  100% {
+    transform: translate3d(0, 0, 0) skewX(0deg);
+    text-shadow: 0 0 0 transparent;
+  }
+  72% {
+    transform: translate3d(-1px, 1px, 0) skewX(-0.7deg);
+    text-shadow:
+      1px 0 0 color-mix(in srgb, var(--color-blood) 65%, transparent),
+      -1px 0 0 color-mix(in srgb, var(--color-forest) 55%, transparent);
+  }
+  73.5% {
+    transform: translate3d(1px, 0, 0) skewX(0.4deg);
+    text-shadow:
+      -1px 0 0 color-mix(in srgb, var(--color-blood) 45%, transparent),
+      1px 0 0 color-mix(in srgb, var(--color-forest) 35%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-spasm,
+  .text-twitch {
+    animation: none;
+    transform: none;
+    text-shadow: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -34,7 +34,7 @@ export function Footer({ name }: { name: string }) {
       <div className="relative mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <div>
-            <p className="font-display text-2xl font-bold tracking-tight text-mist">
+            <p className="font-omori-hand text-[1.65rem] leading-tight tracking-[0.01em] text-mist">
               {name}
             </p>
             <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.25em] text-mist/40">
