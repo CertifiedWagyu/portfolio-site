@@ -135,8 +135,8 @@ export function GamesManager() {
         </Alert>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-text-secondary">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-4">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-secondary">
           {items.length} game{items.length === 1 ? "" : "s"} total
         </p>
         <Button onClick={openAdd}>+ Add game</Button>
@@ -148,12 +148,12 @@ export function GamesManager() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search games by name…"
-          className="flex-1 rounded-xl border border-border-light bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+          className="flex-1 border-2 border-border bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20"
         />
         <select
           value={platform}
           onChange={(e) => setPlatform(e.target.value)}
-          className="rounded-xl border border-border-light bg-surface px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+          className="border-2 border-border bg-surface px-4 py-2.5 text-sm transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20"
         >
           <option value="All">All platforms</option>
           {GAME_PLATFORMS.map((p) => (
@@ -165,7 +165,7 @@ export function GamesManager() {
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value)}
-          className="rounded-xl border border-border-light bg-surface px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+          className="border-2 border-border bg-surface px-4 py-2.5 text-sm transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20"
         >
           <option value="All">All visibility</option>
           <option value="public">Public</option>
@@ -186,16 +186,16 @@ export function GamesManager() {
       ) : filtered.length === 0 ? (
         <EmptyState title="No matching games" description="Adjust your search or filters." />
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => {
             const thumb = item.thumbnail_path ? urlMap[item.thumbnail_path] : undefined;
             const link = safeUrl(item.game_url);
             return (
               <article
                 key={item.id}
-                className="flex flex-col overflow-hidden rounded-2xl border border-border-light bg-surface-light/40"
+                className="flex flex-col overflow-hidden border-2 border-border bg-surface-light"
               >
-                <div className="flex aspect-video items-center justify-center overflow-hidden border-b border-border-light bg-surface">
+                <div className="flex aspect-video items-center justify-center overflow-hidden border-b-2 border-border bg-cream">
                   {thumb ? (
                     <img src={thumb} alt={item.title} className="h-full w-full object-cover" />
                   ) : (
@@ -206,10 +206,10 @@ export function GamesManager() {
                 </div>
                 <div className="flex flex-1 flex-col p-4">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-heading text-sm font-semibold">{item.title}</h3>
+                    <h3 className="font-heading text-[13px] font-extrabold uppercase leading-tight tracking-[-0.01em]">{item.title}</h3>
                     <VisibilityBadge visibility={item.visibility} />
                   </div>
-                  <p className="mt-1 font-mono text-[11px] text-text-muted">
+                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">
                     {[item.platform, item.genre, item.development_status]
                       .filter(Boolean)
                       .join(" · ")}
@@ -224,7 +224,7 @@ export function GamesManager() {
                       {item.game_url}
                     </a>
                   ) : (
-                    <span className="mt-2 text-xs text-red-300">Invalid URL</span>
+                    <span className="mt-2 text-xs text-ember">Invalid URL</span>
                   )}
                   <div className="mt-4 flex gap-2 pt-2">
                     <Button variant="secondary" className="flex-1 px-3 py-2 text-xs" onClick={() => openEdit(item)}>

@@ -69,41 +69,38 @@ function TelemetryPanel({ siteProfile }: { siteProfile: SiteProfile }) {
   const manilaTime = useClock("Asia/Manila");
 
   return (
-    <div className="panel rounded-2xl p-6">
-      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-latte">
+    <div className="border-2 border-coal bg-card">
+      <div className="flex items-center justify-between bg-coal px-4 py-2 font-mono text-[9px] uppercase tracking-[0.24em] text-parchment">
         <span>Currently</span>
-        <span className="flex items-center gap-1.5 text-forest">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute h-full w-full animate-ping rounded-full bg-forest opacity-60" />
-            <span className="h-1.5 w-1.5 rounded-full bg-forest" />
-          </span>
+        <span className="flex items-center gap-2 accent-invert">
+          <span className="h-1.5 w-1.5 bg-ember" aria-hidden="true" />
           online
         </span>
       </div>
 
-      <div className="mt-5 flex items-center gap-4">
+      <div className="flex items-center gap-4 p-4 sm:p-5">
         {siteProfile.avatarUrl ? (
           <img
             src={siteProfile.avatarUrl}
             alt={siteProfile.displayName}
-            className="h-14 w-14 rounded-xl border border-line object-cover"
+            className="h-14 w-14 shrink-0 border-2 border-coal object-cover"
           />
         ) : (
-          <div className="font-display flex h-14 w-14 items-center justify-center rounded-xl bg-coal text-base font-bold text-parchment">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center border-2 border-coal bg-coal font-heading text-lg font-black text-parchment">
             {siteProfile.initials}
           </div>
         )}
         <div className="min-w-0">
-          <p className="font-display truncate text-base font-bold text-coal">
+          <p className="truncate font-heading text-base font-extrabold uppercase tracking-[-0.02em] text-coal">
             {siteProfile.displayName}
           </p>
-          <p className="truncate font-mono text-[11px] text-fawn">
+          <p className="mt-0.5 truncate font-mono text-[10px] uppercase tracking-[0.14em] text-fawn">
             {siteProfile.tagline}
           </p>
         </div>
       </div>
 
-      <dl className="mt-5 border-t border-line">
+      <dl className="border-t-2 border-coal">
         {[
           { k: "Base", v: fallback.location },
           { k: "School", v: fallback.school },
@@ -111,12 +108,12 @@ function TelemetryPanel({ siteProfile }: { siteProfile: SiteProfile }) {
         ].map((row) => (
           <div
             key={row.k}
-            className="flex items-baseline justify-between gap-4 border-b border-line py-2.5 last:border-b-0"
+            className="flex items-baseline justify-between gap-4 border-b-2 border-coal/10 px-4 py-2.5 last:border-b-0"
           >
-            <dt className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-latte">
+            <dt className="shrink-0 font-mono text-[9px] uppercase tracking-[0.2em] text-latte">
               {row.k}
             </dt>
-            <dd className="truncate text-right text-sm font-medium text-coal">
+            <dd className="truncate text-right text-xs font-semibold text-coal">
               {row.v}
             </dd>
           </div>
@@ -134,53 +131,76 @@ export function Hero({ siteProfile }: { siteProfile: SiteProfile }) {
   const gameCount = useCountUp(counts?.games ?? 0, isInView && counts !== null);
 
   const shown = "translate-y-0 opacity-100";
-  const hidden = "translate-y-6 opacity-0";
+  const hidden = "translate-y-4 opacity-0";
   const nameParts = siteProfile.displayName.split(" ");
   const firstName = nameParts.slice(0, -1).join(" ") || siteProfile.displayName;
   const lastName = nameParts.length > 1 ? nameParts.slice(-1) : "";
 
   return (
-    <section id="home" className="relative scroll-mt-20">
-      <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-28 sm:px-6 sm:pt-36">
-        <div ref={ref} className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-          <div className="pt-2">
+    <section id="home" className="relative scroll-mt-16 overflow-hidden">
+      <div className="mx-auto w-full max-w-[1400px] px-4 pt-24 sm:px-6 sm:pt-32">
+        <div
+          style={{ transitionDelay: "0ms" }}
+          className={`grid border-2 border-coal bg-card transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none sm:grid-cols-[1fr_auto_auto] ${
+            isInView ? shown : hidden
+          }`}
+        >
+          <div className="flex items-center gap-2.5 px-4 py-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-fawn sm:border-r-2 sm:border-coal/10">
+            <span className="h-1.5 w-1.5 bg-ember" aria-hidden="true" />
+            {fallback.location}
+          </div>
+          <div className="border-t-2 border-coal/10 bg-ember px-4 py-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-parchment sm:border-t-0 sm:border-r-2 sm:border-coal/10">
+            Open to internships
+          </div>
+          <div className="border-t-2 border-coal/10 px-4 py-2.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-latte sm:border-t-0">
+            UTC+8 / PHT
+          </div>
+        </div>
+
+        <div
+          ref={ref}
+          className="mt-8 grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12"
+        >
+          <div className="lg:col-span-7">
             <p
-              style={{ transitionDelay: "0ms" }}
-              className={`inline-flex items-center gap-2 rounded-full border border-line bg-card px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-fawn transition-all duration-700 ${
+              style={{ transitionDelay: "40ms" }}
+              className={`font-mono text-[10px] font-bold uppercase tracking-[0.34em] text-latte transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
                 isInView ? shown : hidden
               }`}
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-ember" aria-hidden="true" />
-              {fallback.location}
+              Portfolio — 2026
             </p>
 
             <h1
               style={{ transitionDelay: "90ms" }}
-              className={`font-omori mt-6 text-[1.62rem] font-normal leading-[1.2] tracking-[0.01em] text-coal transition-all duration-700 ease-out sm:text-[2.6rem] ${
+              className={`mt-4 font-heading text-[clamp(3rem,9.2vw,7.4rem)] font-black uppercase leading-[0.8] tracking-[-0.055em] text-coal transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
                 isInView ? shown : hidden
               }`}
             >
-              Hello, I&apos;m{" "}
-              <span className="text-spasm text-ember">
-                {firstName}
-                {lastName ? ` ${lastName}` : ""}
-              </span>
-              .
+              {firstName}
+              {lastName && (
+                <span className="mt-1 block w-fit bg-ember px-2 pb-1 text-parchment sm:px-3">
+                  {lastName}
+                </span>
+              )}
             </h1>
 
             <p
-              style={{ transitionDelay: "180ms" }}
-              className={`mt-4 flex h-6 items-center font-mono text-sm tracking-[0.06em] text-fawn transition-all duration-700 ${
+              style={{ transitionDelay: "150ms" }}
+              className={`mt-5 flex h-6 items-center font-mono text-xs font-semibold uppercase tracking-[0.18em] text-fawn transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none sm:text-sm ${
                 isInView ? shown : hidden
               }`}
             >
+              <span className="mr-2 text-ember" aria-hidden="true">
+                &gt;
+              </span>
               <span className="min-w-0">{typed}</span>
-              <span className="animate-blink ml-0.5 inline-block h-4 w-[2px] bg-ember" aria-hidden="true" />
+              <span className="animate-blink ml-1 inline-block h-4 w-2 bg-ember" aria-hidden="true" />
             </p>
 
             <p
-              style={{ transitionDelay: "260ms" }}
-              className={`mt-5 max-w-xl text-base leading-relaxed text-fawn sm:text-lg transition-all duration-700 ${
+              style={{ transitionDelay: "210ms" }}
+              className={`mt-5 max-w-xl text-sm leading-relaxed text-fawn transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none sm:text-base ${
                 isInView ? shown : hidden
               }`}
             >
@@ -188,25 +208,23 @@ export function Hero({ siteProfile }: { siteProfile: SiteProfile }) {
             </p>
 
             <div
-              style={{ transitionDelay: "340ms" }}
-              className={`mt-9 flex flex-wrap gap-3 transition-all duration-700 ${
+              style={{ transitionDelay: "270ms" }}
+              className={`mt-8 flex flex-wrap gap-3 transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
                 isInView ? shown : hidden
               }`}
             >
               <Magnetic>
                 <a
                   href="#contact"
-                  className="group inline-flex items-center gap-2 rounded-full bg-coal px-7 py-3 text-sm font-semibold text-parchment transition-colors hover:bg-ember-deep hover:text-white"
+                  className="hover-brutal inline-flex items-center gap-3 border-2 border-coal bg-coal px-6 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-parchment"
                 >
                   Get in touch
-                  <span className="transition-transform group-hover:translate-x-0.5" aria-hidden="true">
-                    →
-                  </span>
+                  <span aria-hidden="true">→</span>
                 </a>
               </Magnetic>
               <a
                 href="#games"
-                className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-7 py-3 text-sm font-semibold text-coal transition-colors hover:border-coal/25"
+                className="hover-brutal inline-flex items-center gap-3 border-2 border-coal bg-card px-6 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-coal"
               >
                 View my work
               </a>
@@ -214,20 +232,23 @@ export function Hero({ siteProfile }: { siteProfile: SiteProfile }) {
 
             {counts && (
               <dl
-                style={{ transitionDelay: "420ms" }}
-                className={`mt-12 flex flex-wrap items-center gap-x-10 gap-y-4 border-t border-line pt-6 transition-all duration-700 ${
+                style={{ transitionDelay: "330ms" }}
+                className={`mt-10 grid max-w-lg grid-cols-2 border-2 border-coal transition-all duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
                   isInView ? shown : hidden
                 }`}
               >
                 {[
                   { value: certCount, label: "Certificates" },
                   { value: gameCount, label: "Projects" },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <dd className="font-display text-3xl font-bold tabular-nums text-coal">
-                      {s.value}
+                ].map((s, i) => (
+                  <div
+                    key={s.label}
+                    className={`p-4 sm:p-5 ${i === 1 ? "border-l-2 border-coal" : ""}`}
+                  >
+                    <dd className="font-heading text-3xl font-black tabular-nums leading-none text-coal sm:text-4xl">
+                      {String(s.value).padStart(2, "0")}
                     </dd>
-                    <dt className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-latte">
+                    <dt className="mt-2 font-mono text-[9px] uppercase tracking-[0.24em] text-latte">
                       {s.label}
                     </dt>
                   </div>
@@ -238,41 +259,45 @@ export function Hero({ siteProfile }: { siteProfile: SiteProfile }) {
 
           <div
             style={{ transitionDelay: "200ms" }}
-            className={`flex flex-col gap-5 transition-all duration-1000 ease-out ${
-              isInView ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            className={`flex flex-col gap-4 transition-all duration-700 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none lg:col-span-5 ${
+              isInView ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
             }`}
           >
-            <div className="panel overflow-hidden rounded-2xl">
-              <div className="flex items-center justify-between border-b border-line px-5 py-3 font-mono text-[10px] uppercase tracking-[0.2em] text-latte">
-                <span>4d projection</span>
-                <span className="flex items-center gap-1.5 text-fawn">
-                  <span className="h-1.5 w-1.5 rounded-full bg-ember" aria-hidden="true" />
-                  drag to rotate
+            <div className="border-2 border-coal bg-card">
+              <div className="flex items-center justify-between border-b-2 border-coal px-4 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.22em]">
+                <span className="text-coal">4D projection</span>
+                <span className="text-ember">Drag to rotate</span>
+              </div>
+              <div className="grid-faint">
+                <AsciiArt
+                  variant="tesseract"
+                  className="h-52 w-full sm:h-64"
+                  fontSize={12}
+                  interactive
+                />
+              </div>
+              <div className="flex items-center justify-between border-t-2 border-coal px-4 py-2 font-mono text-[9px] uppercase tracking-[0.2em] text-latte">
+                <span>tesseract.core-4d</span>
+                <span className="flex items-center gap-1.5 text-ember">
+                  synced
+                  <span className="h-1.5 w-1.5 bg-ember" aria-hidden="true" />
                 </span>
               </div>
-              <AsciiArt
-                variant="tesseract"
-                className="h-52 w-full sm:h-60"
-                fontSize={12}
-                interactive
-              />
             </div>
             <TelemetryPanel siteProfile={siteProfile} />
           </div>
         </div>
 
-        <div className="mt-20 flex justify-center">
-          <a
-            href="#about"
-            aria-label="Scroll to about"
-            className="group flex flex-col items-center gap-2 text-latte transition-colors hover:text-ember"
-          >
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-            <span className="flex h-9 w-5 items-start justify-center rounded-full border border-current p-1.5">
-              <span className="h-1.5 w-1 animate-bounce rounded-full bg-current" />
-            </span>
-          </a>
-        </div>
+        <a
+          href="#about"
+          aria-label="Scroll to about"
+          className="mt-12 flex items-center justify-between border-t-2 border-coal py-4 font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-latte transition-colors hover:text-coal"
+        >
+          <span className="flex items-center gap-3">
+            <span aria-hidden="true">↓</span> Scroll
+          </span>
+          <span>01 / About</span>
+        </a>
       </div>
     </section>
   );

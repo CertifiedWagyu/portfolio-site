@@ -149,18 +149,18 @@ export function EasterEgg() {
       <button
         type="button"
         onClick={() => setWhisper(false)}
-        className="secret-whisper fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-forest/30 bg-ink/90 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.3em] text-forest shadow-lift backdrop-blur-md transition-colors hover:border-forest/60 hover:text-mist"
+        className="secret-whisper fixed bottom-6 left-1/2 z-[60] -translate-x-1/2 border-2 border-ember bg-ink px-5 py-2.5 font-mono text-[9px] uppercase tracking-[0.26em] text-mist shadow-[4px_4px_0_0_var(--color-ember)] transition-colors hover:bg-ember hover:text-parchment"
       >
-        <span className="secret-whisper-dot mr-2 inline-block h-1.5 w-1.5 rounded-full bg-forest align-middle" aria-hidden="true" />
+        <span className="secret-whisper-dot mr-2 inline-block h-1.5 w-1.5 bg-ember align-middle" aria-hidden="true" />
         you scrolled to the end. most stop here.
-        <span className="ml-2 text-latte">tap the last signal ↓</span>
+        <span className="ml-2 text-mist/50">tap the last signal ↓</span>
       </button>
     ) : null;
   }
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/85 p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Classified payload"
@@ -168,31 +168,32 @@ export function EasterEgg() {
         if (event.target === event.currentTarget) setOpen(false);
       }}
     >
-      <div className="shadow-lift relative w-full max-w-2xl rounded-3xl border border-line bg-card p-4 sm:p-6">
-        <div className="relative flex items-center justify-between gap-3 pb-3">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-ember">
+      <div className="relative w-full max-w-2xl border-2 border-coal bg-card p-3 shadow-[10px_10px_0_0_var(--color-ember)] sm:p-5">
+        <div className="flex items-center justify-between gap-3 border-b-2 border-coal pb-3">
+          <span className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-ember">
+            <span className="h-1.5 w-1.5 bg-ember" aria-hidden="true" />
             Signal acquired
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-latte">
+          <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-latte">
             Classified // eyes only
           </span>
         </div>
-        <div className="relative overflow-hidden rounded-2xl border border-line bg-cream">
+        <div className="relative mt-3 overflow-hidden border-2 border-coal bg-cream">
           <img
             src="/secret-easter-egg.png"
             alt="Classified Easter egg payload"
             className="mx-auto max-h-[62vh] w-auto object-contain"
           />
         </div>
-        <div className="relative flex items-center justify-between gap-4 pt-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-fawn">
+        <div className="flex items-center justify-between gap-4 border-t-2 border-coal pt-3">
+          <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-fawn">
             Unauthorized observer detected
           </p>
           <button
             ref={closeRef}
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-full border border-ember/40 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-ember transition-colors hover:bg-ember-deep hover:border-ember-deep hover:text-white"
+            className="border-2 border-coal bg-coal px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-parchment transition-colors hover:bg-ember"
           >
             Close
           </button>

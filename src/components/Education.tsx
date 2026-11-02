@@ -28,35 +28,37 @@ export function Education() {
       title="Education timeline"
       description="Where I've studied, and where the learning never stops."
     >
-      <div className="relative ml-2 max-w-3xl sm:ml-6">
-        <span
-          aria-hidden="true"
-          className="absolute bottom-4 left-0 top-4 w-px rounded-full bg-line"
-        />
+      <div className="border-2 border-coal bg-card">
         {ENTRIES.map((entry, i) => (
-          <Reveal key={entry.title} delay={i * 140}>
-            <div className="relative pb-10 pl-10 last:pb-0 sm:pl-14">
-              <span className="absolute left-0 top-1 flex -translate-x-1/2 items-center justify-center" aria-hidden="true">
+          <Reveal key={entry.title} delay={i * 120}>
+            <div className="grid border-b-2 border-coal last:border-b-0 md:grid-cols-12">
+              <div className="flex items-start justify-between gap-4 border-b-2 border-coal p-5 md:col-span-4 md:border-b-0 md:border-r-2 sm:p-6">
+                <div>
+                  <p className="font-heading text-3xl font-black leading-none tracking-[-0.06em] text-ember tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </p>
+                  <p className="mt-3 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-latte">
+                    {entry.period}
+                  </p>
+                </div>
                 {entry.current && (
-                  <span className="absolute h-7 w-7 rounded-full bg-ember/15" />
+                  <span className="flex items-center gap-1.5 border-2 border-coal bg-coal px-2 py-1 font-mono text-[8px] font-bold uppercase tracking-[0.18em] text-parchment">
+                    <span className="h-1 w-1 bg-ember" aria-hidden="true" />
+                    now
+                  </span>
                 )}
-                <span
-                  className={`relative h-3.5 w-3.5 rounded-full border-2 ${
-                    entry.current
-                      ? "border-ember bg-ember"
-                      : "border-line bg-card"
-                  }`}
-                />
-              </span>
-              <p className="font-mono text-xs font-bold uppercase tracking-[0.22em] text-ember">
-                {entry.period}
-              </p>
-              <h3 className="font-display mt-2 text-xl font-bold tracking-tight text-coal sm:text-2xl">
-                {entry.title}
-              </h3>
-              <p className="mt-1 text-sm font-semibold text-fawn">{entry.place}</p>
-              <div className="panel mt-4 max-w-xl rounded-2xl p-5">
-                <p className="text-sm leading-relaxed text-fawn">{entry.body}</p>
+              </div>
+
+              <div className="p-5 md:col-span-8 sm:p-7">
+                <h3 className="font-heading text-xl font-extrabold uppercase leading-tight tracking-[-0.02em] text-coal sm:text-2xl">
+                  {entry.title}
+                </h3>
+                <p className="mt-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-ember">
+                  {entry.place}
+                </p>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-fawn">
+                  {entry.body}
+                </p>
               </div>
             </div>
           </Reveal>

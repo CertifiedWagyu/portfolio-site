@@ -10,7 +10,7 @@ import type { Visibility } from "../lib/types";
 export function Spinner({ className = "" }: { className?: string }) {
   return (
     <span
-      className={`inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent ${className}`}
+      className={`inline-block h-3.5 w-3.5 animate-spin border-2 border-current border-t-transparent ${className}`}
       aria-hidden="true"
     />
   );
@@ -25,12 +25,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const buttonStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-primary to-primary-dark text-white shadow-lg shadow-primary/20 hover:opacity-90",
+    "border-coal bg-coal text-parchment hover:border-ember hover:bg-ember hover:text-parchment",
   secondary:
-    "border border-border-light bg-surface-light/60 text-text-primary hover:border-primary/50 hover:bg-surface-lighter",
+    "border-border bg-surface-light text-text-primary hover:bg-cream",
   danger:
-    "bg-red-500/90 text-white hover:bg-red-500 shadow-lg shadow-red-500/20",
-  ghost: "text-text-secondary hover:bg-surface-light hover:text-text-primary",
+    "border-ember bg-ember text-parchment hover:border-ember-deep hover:bg-ember-deep",
+  ghost:
+    "border-transparent text-text-secondary hover:border-border hover:bg-cream hover:text-text-primary",
 };
 
 export function Button({
@@ -45,7 +46,7 @@ export function Button({
     <button
       {...rest}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-60 ${buttonStyles[variant]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 border-2 px-4 py-2.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${buttonStyles[variant]} ${className}`}
     >
       {loading && <Spinner />}
       {children}
@@ -56,9 +57,9 @@ export function Button({
 type AlertKind = "success" | "error" | "info";
 
 const alertStyles: Record<AlertKind, string> = {
-  success: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-  error: "border-red-500/40 bg-red-500/10 text-red-300",
-  info: "border-primary/40 bg-primary/10 text-primary-light",
+  success: "border-forest bg-forest/10 text-forest",
+  error: "border-ember bg-ember/10 text-ember",
+  info: "border-coal bg-cream text-text-primary",
 };
 
 export function Alert({
@@ -73,7 +74,7 @@ export function Alert({
   return (
     <div
       role={kind === "error" ? "alert" : "status"}
-      className={`flex items-start justify-between gap-3 rounded-xl border px-4 py-3 text-sm ${alertStyles[kind]}`}
+      className={`flex items-start justify-between gap-3 border-2 px-4 py-3 text-sm ${alertStyles[kind]}`}
     >
       <span>{children}</span>
       {onClose && (
@@ -103,18 +104,22 @@ export function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-text-primary">
+      <span className="mb-2 block font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-text-secondary">
         {label}
-        {required && <span className="text-accent"> *</span>}
+        {required && <span className="text-ember"> *</span>}
       </span>
       {children}
-      {hint && <span className="mt-1 block text-xs text-text-muted">{hint}</span>}
+      {hint && (
+        <span className="mt-1.5 block text-xs leading-relaxed text-text-muted">
+          {hint}
+        </span>
+      )}
     </label>
   );
 }
 
 const inputClass =
-  "w-full rounded-xl border border-border-light bg-surface px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
+  "w-full border-2 border-border bg-surface px-3.5 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20";
 
 export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={`${inputClass} ${props.className ?? ""}`} />;
@@ -134,13 +139,13 @@ export function VisibilityBadge({ visibility }: { visibility: Visibility }) {
   const isPublic = visibility === "public";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-xs ${
+      className={`inline-flex items-center gap-1.5 border-2 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] ${
         isPublic
-          ? "bg-emerald-500/10 text-emerald-300"
-          : "bg-amber-500/10 text-amber-300"
+          ? "border-forest bg-forest/10 text-forest"
+          : "border-border bg-coal/5 text-text-muted"
       }`}
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-current" />
+      <span className="h-1.5 w-1.5 bg-current" aria-hidden="true" />
       {isPublic ? "Public" : "Private"}
     </span>
   );
@@ -156,14 +161,16 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border-light bg-surface-light/20 px-6 py-14 text-center">
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary-light">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <div className="flex flex-col items-center justify-center border-2 border-dashed border-border px-6 py-14 text-center">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center border-2 border-border bg-cream text-text-primary">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <path d="M14 2v6h6" />
         </svg>
       </div>
-      <p className="font-heading text-base font-semibold">{title}</p>
+      <p className="font-heading text-base font-extrabold uppercase tracking-[-0.02em]">
+        {title}
+      </p>
       {description && (
         <p className="mt-1 max-w-sm text-sm text-text-secondary">{description}</p>
       )}
@@ -191,11 +198,16 @@ export function ConfirmDialog({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-border-light bg-surface-light p-6 shadow-2xl">
-        <h3 className="font-heading text-lg font-semibold">{title}</h3>
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4">
+      <div className="w-full max-w-md border-2 border-coal bg-surface-light p-6 shadow-[8px_8px_0_0_var(--color-coal)]">
+        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-ember">
+          [ Confirm action ]
+        </p>
+        <h3 className="mt-2 font-heading text-lg font-extrabold uppercase tracking-[-0.02em]">
+          {title}
+        </h3>
         <p className="mt-2 text-sm leading-relaxed text-text-secondary">{message}</p>
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex justify-end gap-2">
           <Button variant="secondary" onClick={onCancel} disabled={loading}>
             Cancel
           </Button>
@@ -223,22 +235,24 @@ export function Modal({
 }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:p-8">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-4 sm:p-8">
       <div
-        className={`w-full ${wide ? "max-w-3xl" : "max-w-xl"} rounded-2xl border border-border-light bg-surface-light shadow-2xl`}
+        className={`w-full ${wide ? "max-w-3xl" : "max-w-xl"} border-2 border-coal bg-surface-light shadow-[8px_8px_0_0_var(--color-coal)]`}
       >
-        <div className="flex items-center justify-between border-b border-border-light px-6 py-4">
-          <h3 className="font-heading text-lg font-semibold">{title}</h3>
+        <div className="flex items-center justify-between border-b-2 border-border px-5 py-3.5">
+          <h3 className="font-heading text-base font-extrabold uppercase tracking-[-0.02em]">
+            {title}
+          </h3>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-text-muted transition-colors hover:bg-surface hover:text-text-primary"
+            className="flex h-8 w-8 items-center justify-center border-2 border-border text-text-muted transition-colors hover:bg-coal hover:text-parchment"
             aria-label="Close"
           >
             ✕
           </button>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-5 sm:p-6">{children}</div>
       </div>
     </div>
   );

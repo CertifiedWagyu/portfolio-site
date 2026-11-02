@@ -147,8 +147,8 @@ export function CertificatesManager() {
         </Alert>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-text-secondary">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-4">
+        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-text-secondary">
           {items.length} certificate{items.length === 1 ? "" : "s"} total
         </p>
         <Button onClick={openAdd}>+ Add certificate</Button>
@@ -160,12 +160,12 @@ export function CertificatesManager() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by title or organization…"
-          className="flex-1 rounded-xl border border-border-light bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted focus:border-primary focus:outline-none"
+          className="flex-1 border-2 border-border bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20"
         />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-xl border border-border-light bg-surface px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+          className="border-2 border-border bg-surface px-4 py-2.5 text-sm transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20"
         >
           <option value="All">All categories</option>
           {CERTIFICATE_CATEGORIES.map((c) => (
@@ -177,7 +177,7 @@ export function CertificatesManager() {
         <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value)}
-          className="rounded-xl border border-border-light bg-surface px-4 py-2.5 text-sm focus:border-primary focus:outline-none"
+          className="border-2 border-border bg-surface px-4 py-2.5 text-sm transition-colors focus:border-ember focus:outline-none focus:ring-2 focus:ring-ember/20"
         >
           <option value="All">All visibility</option>
           <option value="public">Public</option>
@@ -198,15 +198,15 @@ export function CertificatesManager() {
       ) : filtered.length === 0 ? (
         <EmptyState title="No matching certificates" description="Adjust your search or filters." />
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((item) => {
             const url = item.file_path ? urlMap[item.file_path] : undefined;
             return (
               <article
                 key={item.id}
-                className="flex flex-col overflow-hidden rounded-2xl border border-border-light bg-surface-light/40"
+                className="flex flex-col overflow-hidden border-2 border-border bg-surface-light"
               >
-                <div className="flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border-light bg-surface">
+                <div className="flex aspect-[16/10] items-center justify-center overflow-hidden border-b-2 border-border bg-cream">
                   {url && !isPdfPath(item.file_path) ? (
                     <img src={url} alt={item.title} className="h-full w-full object-cover" />
                   ) : (
@@ -218,11 +218,11 @@ export function CertificatesManager() {
                 </div>
                 <div className="flex flex-1 flex-col p-4">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-heading text-sm font-semibold">{item.title}</h3>
+                    <h3 className="font-heading text-[13px] font-extrabold uppercase leading-tight tracking-[-0.01em]">{item.title}</h3>
                     <VisibilityBadge visibility={item.visibility} />
                   </div>
                   <p className="mt-1 text-xs text-text-secondary">{item.organization}</p>
-                  <p className="mt-0.5 font-mono text-[11px] text-text-muted">
+                  <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">
                     {[item.category, formatDate(item.date_received)].filter(Boolean).join(" · ")}
                   </p>
                   <div className="mt-4 flex gap-2 pt-2">

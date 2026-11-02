@@ -109,14 +109,21 @@ export function ProfileManager() {
         </Alert>
       )}
 
-      <div className="rounded-2xl border border-border-light bg-surface-light/40 p-6">
-        <h2 className="font-heading text-base font-semibold">Public profile</h2>
-        <p className="mt-1 text-sm text-text-muted">
-          This is what guests see at the top of your website — your photo, name,
-          and short intro.
-        </p>
+      <div className="border-2 border-border bg-surface-light">
+        <div className="flex items-center justify-between border-b-2 border-border px-5 py-3 font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-text-muted">
+          <span>Public profile</span>
+          <span className="text-ember">02 / 01</span>
+        </div>
+        <div className="p-5 sm:p-6">
+          <h2 className="font-heading text-lg font-extrabold uppercase tracking-[-0.02em]">
+            Public profile
+          </h2>
+          <p className="mt-1 text-sm text-text-muted">
+            This is what guests see at the top of your website — your photo, name,
+            and short intro.
+          </p>
 
-        <div className="mt-5 space-y-4">
+          <div className="mt-5 space-y-4">
           <FileInput
             label="Profile photo"
             hint="Square photos look best. Max 5 MB — PNG, JPG, WEBP, or GIF."
@@ -166,10 +173,11 @@ export function ProfileManager() {
           </Field>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-end border-t-2 border-border pt-5">
           <Button onClick={handleSave} loading={saving}>
             Save profile
           </Button>
+        </div>
         </div>
       </div>
     </div>

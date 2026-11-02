@@ -63,9 +63,9 @@ export function FileInput({
 
   return (
     <Field label={label} hint={hint}>
-      <div className="rounded-xl border border-dashed border-border-light bg-surface/60 p-4">
+      <div className="border-2 border-dashed border-border bg-surface/60 p-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border-light bg-surface">
+          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden border-2 border-border bg-cream">
             {selectedFile && previewUrl && !selectedFile.type.includes("pdf") ? (
               <img src={previewUrl} alt="Selected file preview" className="h-full w-full object-cover" />
             ) : showExisting && !currentIsPdf ? (
@@ -84,7 +84,7 @@ export function FileInput({
               type="file"
               accept={accept}
               onChange={(e) => handleChange(e.target.files?.[0] ?? null)}
-              className="block w-full cursor-pointer rounded-lg border border-border-light bg-surface text-sm text-text-secondary file:mr-3 file:cursor-pointer file:border-0 file:bg-primary/15 file:px-3 file:py-2 file:text-sm file:font-medium file:text-primary-light hover:file:bg-primary/25"
+              className="block w-full cursor-pointer border-2 border-border bg-surface text-sm text-text-secondary file:mr-3 file:cursor-pointer file:border-0 file:border-r-2 file:border-border file:bg-coal file:px-3 file:py-2 file:font-mono file:text-[10px] file:font-bold file:uppercase file:tracking-[0.12em] file:text-parchment hover:file:bg-ember"
             />
             <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted">
               {selectedFile && (
@@ -98,7 +98,7 @@ export function FileInput({
                     href={currentUrl ?? "#"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-light hover:underline"
+                    className="text-ember hover:underline"
                   >
                     View current file
                   </a>
@@ -109,14 +109,14 @@ export function FileInput({
                       onError(null);
                       if (inputRef.current) inputRef.current.value = "";
                     }}
-                    className="text-red-300 hover:underline"
+                    className="text-ember hover:underline"
                   >
                     Remove current file
                   </button>
                 </>
               )}
             </div>
-            {error && <p className="text-xs text-red-300">{error}</p>}
+            {error && <p className="text-xs text-ember">{error}</p>}
           </div>
         </div>
       </div>

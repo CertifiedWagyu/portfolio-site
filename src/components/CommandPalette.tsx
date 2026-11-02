@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { profile } from "../data/profile";
 import { navigate } from "../lib/router";
-import { COMMAND_PALETTE_EVENT } from "../lib/commandPalette";import { useTheme } from "../hooks/useTheme";
+import { COMMAND_PALETTE_EVENT } from "../lib/commandPalette";
+import { useTheme } from "../hooks/useTheme";
 
 const SECTIONS = [
   { id: "home", label: "Home", hint: "top" },
@@ -190,19 +191,19 @@ export function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-ink/40 p-4 pt-[12vh] backdrop-blur-sm"
+      className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-black/80 p-4 pt-[12vh]"
       onClick={() => setOpen(false)}
       role="presentation"
     >
       <div
-        className="panel shadow-lift w-full max-w-lg overflow-hidden rounded-2xl"
+        className="w-full max-w-lg border-2 border-coal bg-card shadow-[10px_10px_0_0_var(--color-coal)]"
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 border-b border-line px-4">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="shrink-0 text-latte" aria-hidden="true">
+        <div className="flex items-center gap-3 border-b-2 border-coal px-4">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" className="shrink-0 text-ember" aria-hidden="true">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" />
           </svg>
@@ -230,35 +231,43 @@ export function CommandPalette() {
             aria-label="Search commands"
             className="h-14 flex-1 bg-transparent text-sm text-coal placeholder:text-latte focus:outline-none"
           />
-          <kbd className="shrink-0 rounded border border-line px-1.5 py-0.5 font-mono text-[10px] uppercase text-latte">
+          <kbd className="shrink-0 border-2 border-line px-1.5 py-0.5 font-mono text-[9px] uppercase text-latte">
             esc
           </kbd>
         </div>
 
-        <ul className="max-h-80 overflow-y-auto p-2">
+        <ul className="max-h-80 overflow-y-auto">
           {results.map((action, i) => (
-            <li key={action.id}>
+            <li key={action.id} className="border-b-2 border-coal/10 last:border-b-0">
               <button
                 type="button"
                 onMouseEnter={() => setCursor(i)}
                 onClick={() => action.run()}
-                className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                  i === activeIndex ? "bg-coal/[0.06] text-coal" : "text-fawn hover:bg-coal/[0.04]"
+                className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm transition-colors ${
+                  i === activeIndex
+                    ? "bg-coal font-semibold text-parchment"
+                    : "text-fawn hover:bg-cream hover:text-coal"
                 }`}
               >
-                <span className="truncate font-medium">{action.label}</span>
-                <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.18em] text-latte">
+                <span className="truncate">{action.label}</span>
+                <span
+                  className={`shrink-0 font-mono text-[9px] uppercase tracking-[0.18em] ${
+                    i === activeIndex ? "text-ember" : "text-latte"
+                  }`}
+                >
                   {action.hint}
                 </span>
               </button>
             </li>
           ))}
           {results.length === 0 && (
-            <li className="px-3 py-8 text-center text-sm text-latte">No matches</li>
+            <li className="px-4 py-10 text-center font-mono text-[10px] uppercase tracking-[0.24em] text-latte">
+              No matches
+            </li>
           )}
         </ul>
 
-        <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-latte">
+        <div className="flex items-center justify-between gap-3 border-t-2 border-coal bg-cream px-4 py-2.5 font-mono text-[9px] uppercase tracking-[0.18em] text-latte">
           <span>{status || "↑↓ navigate · ⏎ select"}</span>
           <span>{results.length} results</span>
         </div>

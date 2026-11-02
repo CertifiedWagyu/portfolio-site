@@ -195,8 +195,8 @@ export function GameForm({
         <p className="mb-3 font-mono text-xs uppercase tracking-wide text-text-muted">
           Preview
         </p>
-        <div className="overflow-hidden rounded-2xl border border-border-light bg-surface-light/40">
-          <div className="aspect-video overflow-hidden border-b border-border-light bg-gradient-to-br from-primary/15 via-surface-lighter to-accent/15">
+        <div className="overflow-hidden border-2 border-border bg-surface-light">
+          <div className="dot-faint aspect-video overflow-hidden border-b-2 border-border bg-cream">
             {thumbnailPreviewUrl ? (
               <img
                 src={thumbnailPreviewUrl}
@@ -217,32 +217,32 @@ export function GameForm({
           </div>
           <div className="p-5">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="font-heading text-base font-semibold">
+              <h3 className="font-heading text-base font-extrabold uppercase tracking-[-0.02em]">
                 {input.title || "Game title"}
               </h3>
               <span
-                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] ${
+                className={`shrink-0 border-2 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] ${
                   input.visibility === "public"
-                    ? "bg-emerald-500/10 text-emerald-300"
-                    : "bg-amber-500/10 text-amber-300"
+                    ? "border-forest bg-forest/10 text-forest"
+                    : "border-border bg-coal/5 text-text-muted"
                 }`}
               >
                 {input.visibility}
               </span>
             </div>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-2 flex flex-wrap gap-1.5">
               {input.platform && (
-                <span className="rounded-full border border-border-light px-2.5 py-0.5 font-mono text-[11px] text-text-secondary">
+                <span className="border-2 border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-text-secondary">
                   {input.platform}
                 </span>
               )}
               {input.genre && (
-                <span className="rounded-full border border-border-light px-2.5 py-0.5 font-mono text-[11px] text-text-secondary">
+                <span className="border-2 border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-text-secondary">
                   {input.genre}
                 </span>
               )}
               {input.development_status && (
-                <span className="rounded-full border border-border-light px-2.5 py-0.5 font-mono text-[11px] text-text-secondary">
+                <span className="border-2 border-border px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-text-secondary">
                   {input.development_status}
                 </span>
               )}
@@ -253,7 +253,7 @@ export function GameForm({
               </p>
             )}
             {isValidHttpUrl(input.game_url) && (
-              <p className="mt-3 truncate font-mono text-xs text-accent">
+              <p className="mt-3 truncate font-mono text-[10px] text-ember">
                 {input.game_url}
               </p>
             )}

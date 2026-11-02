@@ -26,83 +26,99 @@ export function About({ siteProfile }: { siteProfile: SiteProfile }) {
     >
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
         <Reveal className="lg:col-span-7">
-          <p className="font-display text-2xl font-bold leading-snug tracking-tight text-coal sm:text-3xl">
+          <p className="font-heading text-[clamp(1.5rem,3.2vw,2.5rem)] font-extrabold uppercase leading-[1.02] tracking-[-0.03em] text-coal">
             I&apos;m{" "}
-            <span className="text-ember">{siteProfile.displayName}</span>, a{" "}
-            {fallback.year.toLowerCase()} IT student turning curiosity into
+            <span className="bg-ember px-1.5 text-parchment">
+              {siteProfile.displayName}
+            </span>
+            , a {fallback.year.toLowerCase()} IT student turning curiosity into
             working software.
           </p>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-fawn">
+          <p className="mt-6 max-w-xl border-l-2 border-coal pl-4 text-sm leading-relaxed text-fawn sm:text-base">
             {siteProfile.bio}
           </p>
-          <div className="mt-7 flex flex-wrap gap-2">
-            {INTERESTS.map((item) => (
-              <span
-                key={item}
-                className="rounded-full border border-line bg-card px-4 py-1.5 text-xs font-semibold text-fawn transition-colors hover:border-ember/30 hover:text-ember"
-              >
-                {item}
-              </span>
-            ))}
+          <div className="mt-8">
+            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.3em] text-latte">
+              [ Interests ]
+            </p>
+            <div className="mt-3 flex flex-wrap gap-0">
+              {INTERESTS.map((item, i) => (
+                <span
+                  key={item}
+                  className={`border-2 border-coal px-3 py-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-fawn transition-colors hover:bg-coal hover:text-parchment ${
+                    i > 0 ? "-ml-0.5" : ""
+                  }`}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
         </Reveal>
 
         <Reveal delay={140} className="lg:col-span-5">
-          <div className="panel rounded-3xl p-7">
-            <div className="flex items-center gap-4">
+          <div className="border-2 border-coal bg-card">
+            <div className="flex items-center justify-between border-b-2 border-coal bg-coal px-4 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.24em] text-parchment">
+              <span>Identity card</span>
+              <span className="accent-invert">001</span>
+            </div>
+
+            <div className="flex items-center gap-4 border-b-2 border-coal p-4 sm:p-5">
               {siteProfile.avatarUrl ? (
                 <img
                   src={siteProfile.avatarUrl}
                   alt={siteProfile.displayName}
-                  className="h-16 w-16 rounded-2xl border border-line object-cover"
+                  className="h-16 w-16 border-2 border-coal object-cover"
                 />
               ) : (
-                <div className="font-display flex h-16 w-16 items-center justify-center rounded-2xl bg-coal text-xl font-bold text-parchment">
+                <div className="flex h-16 w-16 items-center justify-center border-2 border-coal bg-coal font-heading text-xl font-black text-parchment">
                   {siteProfile.initials}
                 </div>
               )}
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-latte">
-                  Identity
+              <div className="min-w-0">
+                <p className="font-mono text-[9px] uppercase tracking-[0.26em] text-latte">
+                  Name
                 </p>
-                <p className="font-display mt-1 text-lg font-bold text-coal">
+                <p className="mt-1 truncate font-heading text-base font-extrabold uppercase tracking-[-0.02em] text-coal">
                   {siteProfile.displayName}
                 </p>
               </div>
             </div>
 
-            <dl className="mt-6 border-t border-line">
+            <dl>
               {FACTS.map((fact) => (
                 <div
                   key={fact.label}
-                  className="flex items-baseline justify-between gap-4 border-b border-line py-3"
+                  className="flex items-baseline justify-between gap-4 border-b-2 border-coal/10 px-4 py-3 last:border-b-0 sm:px-5"
                 >
-                  <dt className="shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-latte">
+                  <dt className="shrink-0 font-mono text-[9px] uppercase tracking-[0.2em] text-latte">
                     {fact.label}
                   </dt>
-                  <dd className="text-right text-sm font-medium text-coal">
+                  <dd className="text-right text-xs font-semibold text-coal">
                     {fact.value}
                   </dd>
                 </div>
               ))}
-              <div className="flex items-baseline justify-between gap-4 py-3">
-                <dt className="shrink-0 font-mono text-[10px] uppercase tracking-[0.2em] text-latte">
+              <div className="flex items-baseline justify-between gap-4 border-t-2 border-coal px-4 py-3 sm:px-5">
+                <dt className="shrink-0 font-mono text-[9px] uppercase tracking-[0.2em] text-latte">
                   Local time
                 </dt>
-                <dd className="font-display text-right text-sm font-bold tabular-nums text-coal">
+                <dd className="font-heading text-right text-xs font-extrabold tabular-nums text-ember">
                   {manilaTime}
                 </dd>
               </div>
             </dl>
 
-            <Magnetic strength={0.15}>
-              <a
-                href="#contact"
-                className="mt-6 flex items-center justify-center gap-2 rounded-full bg-coal px-6 py-3 text-sm font-semibold text-parchment transition-colors hover:bg-ember-deep hover:text-white"
-              >
-                Reach out <span aria-hidden="true">→</span>
-              </a>
-            </Magnetic>
+            <div className="border-t-2 border-coal p-4 sm:p-5">
+              <Magnetic strength={0.15}>
+                <a
+                  href="#contact"
+                  className="hover-brutal flex items-center justify-between border-2 border-coal bg-coal px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-parchment"
+                >
+                  Reach out <span aria-hidden="true">→</span>
+                </a>
+              </Magnetic>
+            </div>
           </div>
         </Reveal>
       </div>

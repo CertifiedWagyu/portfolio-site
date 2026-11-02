@@ -2,90 +2,88 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ---- OMORI faces (self-hosted, see public/fonts) ---- */
-@font-face {
-  font-family: "OMORI Scratch";
-  src: url("/fonts/omori-game-a.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "OMORI Hand";
-  src: url("/fonts/omori-game-b.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-heading: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  /* ---- Type: Archivo display, Space Grotesk text, JetBrains Mono labels ---- */
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-heading: "Archivo", "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Archivo", "Space Grotesk", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-display: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
-  --font-omori: "OMORI Scratch", "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-omori-hand: "OMORI Hand", "Plus Jakarta Sans", system-ui, sans-serif;
 
-  /* ---- Public site: neutral slate + indigo accent ---- */
-  --color-parchment: #f8f9fb;
-  --color-cream: #f1f3f7;
+  /* ---- Public site: paper, ink, one blue ---- */
+  --color-parchment: #fafafa;
+  --color-cream: #f0f0eb;
   --color-card: #ffffff;
-  --color-coal: #101322;
-  --color-fawn: #4e5666;
-  --color-latte: #8b93a5;
-  --color-line: #e5e8ef;
-  --color-ember: #4f46e5;
-  --color-ember-deep: #4338ca;
-  --color-forest: #0f766e;
-  /* Gothic backdrop only: oxblood stained glass */
-  --color-blood: #7a1b2b;
-  --color-blood-deep: #43101a;
-  --color-ghost: rgba(16, 19, 34, 0.05);
+  --color-coal: #09090b;
+  --color-fawn: #3f3f46;
+  --color-latte: #71717a;
+  --color-line: #18181b;
+  --color-ember: #2563eb;
+  --color-ember-deep: #1d4ed8;
+  --color-forest: #1d4ed8;
+  --color-blood: #2563eb;
+  --color-blood-deep: #1e40af;
+  --color-ghost: rgba(9, 9, 11, 0.06);
 
-  /* Fixed "ink" palette: inverted panels stay dark in both themes */
-  --color-ink: #101322;
-  --color-ink-soft: rgba(233, 236, 243, 0.06);
-  --color-mist: #e9ecf3;
+  /* Fixed inverted palette */
+  --color-ink: #09090b;
+  --color-ink-soft: rgba(250, 250, 250, 0.08);
+  --color-mist: #fafafa;
 
-  /* ---- Admin dashboard palette ---- */
-  --color-primary: #8b5cf6;
-  --color-primary-light: #a78bfa;
-  --color-primary-dark: #7c3aed;
-  --color-accent: #22d3ee;
-  --color-accent-light: #67e8f9;
-  --color-neon-pink: #f472b6;
-  --color-neon-purple: #c084fc;
-  --color-neon-blue: #60a5fa;
+  /* ---- Admin dashboard (same system, no neon) ---- */
+  --color-primary: #2563eb;
+  --color-primary-light: #1d4ed8;
+  --color-primary-dark: #1e40af;
+  --color-accent: #2563eb;
+  --color-accent-light: #1d4ed8;
+  --color-neon-pink: #2563eb;
+  --color-neon-purple: #2563eb;
+  --color-neon-blue: #2563eb;
 
-  --color-surface: #060714;
-  --color-surface-light: #0c0f22;
-  --color-surface-lighter: #161a38;
-  --color-text-primary: #eef2ff;
-  --color-text-secondary: #a5b0d4;
-  --color-text-muted: #6b76a0;
-  --color-border: #1a1f3d;
-  --color-border-light: #2a3158;
+  --color-surface: #fafafa;
+  --color-surface-light: #ffffff;
+  --color-surface-lighter: #f0f0eb;
+  --color-text-primary: #09090b;
+  --color-text-secondary: #3f3f46;
+  --color-text-muted: #71717a;
+  --color-border: #18181b;
+  --color-border-light: #18181b;
 }
 
 .dark {
-  --color-parchment: #0b0d12;
-  --color-cream: #0f1219;
-  --color-card: #14171f;
-  --color-coal: #e9ecf3;
-  --color-fawn: #9aa3b2;
-  --color-latte: #6a7383;
-  --color-line: #232833;
-  --color-ember: #818cf8;
-  --color-ember-deep: #6366f1;
-  --color-forest: #2dd4bf;
-  --color-blood: #c2435a;
-  --color-blood-deep: #6e1626;
-  --color-ghost: rgba(233, 236, 243, 0.06);
+  --color-parchment: #0a0a0a;
+  --color-cream: #111113;
+  --color-card: #141416;
+  --color-coal: #fafafa;
+  --color-fawn: #a1a1aa;
+  --color-latte: #8b8b95;
+  --color-line: #3f3f46;
+  --color-ember: #60a5fa;
+  --color-ember-deep: #3b82f6;
+  --color-forest: #60a5fa;
+  --color-blood: #3b82f6;
+  --color-blood-deep: #1d4ed8;
+  --color-ghost: rgba(250, 250, 250, 0.08);
+
+  --color-surface: #0a0a0a;
+  --color-surface-light: #141416;
+  --color-surface-lighter: #1c1c20;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-border: #3f3f46;
+  --color-border-light: #3f3f46;
+
   color-scheme: dark;
 }
 
 @layer base {
+  /* Brutalism: nothing is rounded, anywhere. */
+  *,
+  *::before,
+  *::after {
+    border-radius: 0 !important;
+  }
+
   html {
     scroll-behavior: smooth;
   }
@@ -99,129 +97,141 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    line-height: 0.95;
+  }
+
   ::selection {
-    background-color: color-mix(in srgb, var(--color-ember) 22%, transparent);
-    color: var(--color-coal);
+    background-color: var(--color-ember);
+    color: var(--color-parchment);
   }
 
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
+    height: 12px;
   }
   ::-webkit-scrollbar-track {
     background: var(--color-parchment);
+    border-left: 2px solid var(--color-coal);
   }
   ::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--color-coal) 18%, transparent);
-    border-radius: 999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in srgb, var(--color-coal) 28%, transparent);
+    background: var(--color-coal);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-ember);
-    outline-offset: 2px;
+    outline: 3px solid var(--color-ember);
+    outline-offset: 3px;
   }
 }
 
-/* ---- Surfaces ---- */
+/* ---- Surfaces: hard edges, visible borders, offset shadows ---- */
 @utility panel {
   background-color: var(--color-card);
-  border: 1px solid var(--color-line);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 7%, transparent),
-    0 1px 2px color-mix(in srgb, var(--color-coal) 4%, transparent),
-    0 10px 24px -18px color-mix(in srgb, var(--color-coal) 22%, transparent);
+  border: 2px solid var(--color-coal);
+  box-shadow: none;
 }
 
 @utility glass-panel {
-  background-color: color-mix(in srgb, var(--color-card) 82%, transparent);
-  backdrop-filter: blur(14px);
-  border: 1px solid var(--color-line);
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-coal) 4%, transparent),
-    0 10px 24px -18px color-mix(in srgb, var(--color-coal) 20%, transparent);
+  background-color: var(--color-card);
+  border: 2px solid var(--color-coal);
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 @utility shadow-soft {
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-coal) 4%, transparent),
-    0 10px 24px -18px color-mix(in srgb, var(--color-coal) 22%, transparent);
+  box-shadow: 4px 4px 0 0 var(--color-coal);
 }
 
 @utility shadow-lift {
-  box-shadow:
-    0 2px 4px color-mix(in srgb, var(--color-coal) 5%, transparent),
-    0 18px 36px -20px color-mix(in srgb, var(--color-coal) 26%, transparent);
+  box-shadow: 8px 8px 0 0 var(--color-coal);
+}
+
+@utility shadow-none {
+  box-shadow: none;
+}
+
+/* Accent text on inverted (bg-coal) bars: bright on ink, deep on paper. */
+@utility accent-invert {
+  color: #60a5fa;
+}
+.dark .accent-invert {
+  color: #1d4ed8;
+}
+
+/* Interaction: the whole block shifts, shadow grows. */
+.hover-brutal {
+  transition:
+    transform 120ms steps(2, end),
+    box-shadow 120ms steps(2, end),
+    background-color 120ms linear;
+}
+.hover-brutal:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 8px 8px 0 0 var(--color-coal);
+}
+.hover-brutal:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 0 var(--color-coal);
 }
 
 @utility grid-faint {
   background-image:
-    linear-gradient(color-mix(in srgb, var(--color-coal) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-coal) 6%, transparent) 1px, transparent 1px);
-  background-size: 72px 72px;
-}
-
-/* Soft accent washes — static, no blur filters (cheap to composite). */
-@utility aurora {
-  background-image:
-    radial-gradient(
-      42rem 32rem at 6% -14%,
-      color-mix(in srgb, var(--color-ember) 15%, transparent),
-      transparent 72%
+    linear-gradient(
+      color-mix(in srgb, var(--color-coal) 9%, transparent) 1px,
+      transparent 1px
     ),
-    radial-gradient(
-      38rem 30rem at 97% 20%,
-      color-mix(in srgb, var(--color-forest) 13%, transparent),
-      transparent 72%
-    ),
-    radial-gradient(
-      34rem 28rem at 24% 112%,
-      color-mix(in srgb, var(--color-ember-deep) 12%, transparent),
-      transparent 72%
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-coal) 9%, transparent) 1px,
+      transparent 1px
     );
+  background-size: 56px 56px;
 }
 
-/* Fixed-palette grid for inverted (ink) surfaces. */
 @utility grid-ink {
   background-image:
-    linear-gradient(color-mix(in srgb, var(--color-mist) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-mist) 8%, transparent) 1px, transparent 1px);
-  background-size: 44px 44px;
+    linear-gradient(
+      color-mix(in srgb, var(--color-mist) 10%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-mist) 10%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
 }
 
 @utility dot-faint {
   background-image: radial-gradient(
-    color-mix(in srgb, var(--color-coal) 18%, transparent) 1px,
-    transparent 1.4px
+    color-mix(in srgb, var(--color-coal) 22%, transparent) 1.5px,
+    transparent 1.6px
   );
-  background-size: 22px 22px;
+  background-size: 20px 20px;
 }
 
 @utility vignette {
-  background-image: radial-gradient(
-    125% 95% at 50% 6%,
-    transparent 50%,
-    color-mix(in srgb, var(--color-ink) 15%, transparent) 100%
-  );
+  background-image: none;
 }
 
-/* Extremely slow drift so large empty areas still feel alive. */
+/* Retired decorative washes: kept as no-ops so existing markup stays valid. */
+@utility aurora {
+  background-image: none;
+}
+
 @utility animate-aurora {
-  animation: aurora-drift 52s ease-in-out infinite alternate;
-}
-
-@keyframes aurora-drift {
-  from {
-    transform: translate3d(-2%, -1%, 0) scale(1.03);
-  }
-  to {
-    transform: translate3d(2%, 2%, 0) scale(1.09);
-  }
+  animation: none;
 }
 
 @utility grain {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-image: none;
 }
 
 @utility animate-blink {
@@ -234,17 +244,22 @@
   }
 }
 
+/* Thick rules used to separate blocks. */
+@utility rule {
+  border-top: 2px solid var(--color-coal);
+}
+
 /* ---- Secret easter-egg affordances ---- */
 .secret-trigger {
   cursor: pointer;
 }
 
 .secret-trigger.secret-armed {
-  animation: secret-armed-pulse 1.6s ease-in-out infinite;
+  animation: secret-armed-pulse 1.2s steps(2, end) infinite;
 }
 
 .secret-dot {
-  animation: secret-idle-blink 3.4s ease-in-out infinite;
+  animation: secret-idle-blink 3.4s steps(1, end) infinite;
 }
 
 .secret-trigger .secret-dot:last-of-type {
@@ -265,10 +280,10 @@
 @keyframes secret-armed-pulse {
   0%,
   100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-ember) 35%, transparent);
+    background-color: transparent;
   }
   50% {
-    box-shadow: 0 0 0 5px transparent;
+    background-color: color-mix(in srgb, var(--color-ember) 30%, transparent);
   }
 }
 
@@ -294,123 +309,11 @@
 }
 
 .secret-whisper {
-  animation: secret-whisper-in 0.5s ease-out both;
+  animation: secret-whisper-in 0.2s steps(2, end) both;
 }
 
 .secret-whisper-dot {
-  animation: secret-whisper-dot 1.8s ease-in-out infinite;
-}
-
-/* ---- Horror-game text spasm -------------------------------------------
-   Short, stepped jolts (transform snaps) with a brief red/teal chromatic
-   split, separated by long calm gaps. Applied to the hero name.
-   -------------------------------------------------------------------- */
-.text-spasm {
-  display: inline-block;
-  animation: text-spasm 6.8s steps(1, end) infinite;
-  will-change: transform;
-  transform-origin: center;
-}
-
-@keyframes text-spasm {
-  0%,
-  57.5%,
-  68%,
-  100% {
-    transform: translate3d(0, 0, 0) skewX(0deg);
-    text-shadow: 0 0 0 transparent;
-  }
-  58% {
-    transform: translate3d(-2.5px, 1.5px, 0) skewX(-1.8deg);
-    text-shadow:
-      2.5px 0 0 color-mix(in srgb, var(--color-blood) 80%, transparent),
-      -2.5px 0 0 color-mix(in srgb, var(--color-forest) 70%, transparent);
-  }
-  59.5% {
-    transform: translate3d(2.5px, -1.5px, 0) skewX(1.4deg);
-    text-shadow:
-      -2.5px 0 0 color-mix(in srgb, var(--color-blood) 80%, transparent),
-      2.5px 0 0 color-mix(in srgb, var(--color-forest) 70%, transparent);
-  }
-  61% {
-    transform: translate3d(-1.5px, 0.5px, 0) skewX(-0.9deg);
-    text-shadow:
-      1.5px 0 0 color-mix(in srgb, var(--color-blood) 70%, transparent),
-      -1.5px 0 0 color-mix(in srgb, var(--color-forest) 60%, transparent);
-  }
-  62.5% {
-    transform: translate3d(2px, 1px, 0) skewX(0.7deg);
-    text-shadow:
-      -2px 0 0 color-mix(in srgb, var(--color-blood) 70%, transparent),
-      2px 0 0 color-mix(in srgb, var(--color-forest) 60%, transparent);
-  }
-  64% {
-    transform: translate3d(-1px, -1px, 0) skewX(-0.4deg);
-    text-shadow:
-      1px 0 0 color-mix(in srgb, var(--color-blood) 55%, transparent),
-      -1px 0 0 color-mix(in srgb, var(--color-forest) 45%, transparent);
-  }
-  65.5% {
-    transform: translate3d(1px, 0, 0) skewX(0.3deg);
-    text-shadow:
-      -1px 0 0 color-mix(in srgb, var(--color-blood) 40%, transparent),
-      1px 0 0 color-mix(in srgb, var(--color-forest) 30%, transparent);
-  }
-  /* a small aftershock later in the cycle */
-  86% {
-    transform: translate3d(-1.5px, 0.5px, 0) skewX(-0.8deg);
-    text-shadow:
-      1.5px 0 0 color-mix(in srgb, var(--color-blood) 65%, transparent),
-      -1.5px 0 0 color-mix(in srgb, var(--color-forest) 50%, transparent);
-  }
-  87.5% {
-    transform: translate3d(1px, 0, 0) skewX(0.4deg);
-    text-shadow:
-      -1px 0 0 color-mix(in srgb, var(--color-blood) 45%, transparent),
-      1px 0 0 color-mix(in srgb, var(--color-forest) 35%, transparent);
-  }
-  89% {
-    transform: translate3d(0, 0, 0) skewX(0deg);
-    text-shadow: 0 0 0 transparent;
-  }
-}
-
-/* Rarer, gentler twitch for section headings. */
-.text-twitch {
-  display: inline-block;
-  animation: text-twitch 11s steps(1, end) infinite;
-  transform-origin: center;
-}
-
-@keyframes text-twitch {
-  0%,
-  71%,
-  76%,
-  100% {
-    transform: translate3d(0, 0, 0) skewX(0deg);
-    text-shadow: 0 0 0 transparent;
-  }
-  72% {
-    transform: translate3d(-1px, 1px, 0) skewX(-0.7deg);
-    text-shadow:
-      1px 0 0 color-mix(in srgb, var(--color-blood) 65%, transparent),
-      -1px 0 0 color-mix(in srgb, var(--color-forest) 55%, transparent);
-  }
-  73.5% {
-    transform: translate3d(1px, 0, 0) skewX(0.4deg);
-    text-shadow:
-      -1px 0 0 color-mix(in srgb, var(--color-blood) 45%, transparent),
-      1px 0 0 color-mix(in srgb, var(--color-forest) 35%, transparent);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .text-spasm,
-  .text-twitch {
-    animation: none;
-    transform: none;
-    text-shadow: none;
-  }
+  animation: secret-whisper-dot 1.8s steps(2, end) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -419,18 +322,24 @@
   .secret-trigger.secret-armed,
   .secret-dot,
   .secret-whisper,
-  .secret-whisper-dot {
+  .secret-whisper-dot,
+  .hover-brutal {
     animation: none;
+    transition: none;
+  }
+  .hover-brutal:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
 
 /* ---- Route transitions (View Transitions API) ---- */
 ::view-transition-old(root) {
-  animation: vt-out 180ms ease-in both;
+  animation: vt-out 90ms steps(2, end) both;
 }
 
 ::view-transition-new(root) {
-  animation: vt-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: vt-in 140ms steps(2, end) both;
 }
 
 @keyframes vt-out {
@@ -442,7 +351,6 @@
 @keyframes vt-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
   }
 }
 

@@ -29,30 +29,44 @@ export function Goals() {
       tone="tint"
       description="The direction of travel. Everything here is fuel for what comes next."
     >
-      <div className="relative overflow-hidden rounded-2xl bg-ink px-6 py-12 sm:px-12 sm:py-14">
+      <div className="relative overflow-hidden border-2 border-coal bg-ink">
         <div
           aria-hidden="true"
-          className="grid-ink absolute inset-0 opacity-70 [mask-image:radial-gradient(90%_80%_at_50%_0%,black,transparent)]"
+          className="grid-ink pointer-events-none absolute inset-0 opacity-60"
         />
-        <div
-          aria-hidden="true"
-          className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,var(--color-ember),transparent_68%)] opacity-[0.18]"
-        />
-        <p className="font-display relative text-center text-2xl font-bold leading-tight tracking-tight text-mist sm:text-4xl">
-          Build. Learn. Repeat.
-        </p>
 
-        <div className="relative mt-10 grid gap-4 md:grid-cols-3">
+        <div className="relative flex flex-col gap-4 border-b-2 border-mist/15 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-10">
+          <div>
+            <p className="font-mono text-[9px] font-bold uppercase tracking-[0.32em] text-ember">
+              [ Directives ]
+            </p>
+            <p className="mt-3 font-heading text-[clamp(1.9rem,4.6vw,3.6rem)] font-black uppercase leading-[0.88] tracking-[-0.04em] text-mist">
+              Build. Learn. Repeat.
+            </p>
+          </div>
+          <p className="max-w-[14rem] font-mono text-[9px] uppercase leading-relaxed tracking-[0.2em] text-mist/35">
+            Three rules. No shortcuts.
+          </p>
+        </div>
+
+        <div className="relative grid md:grid-cols-3">
           {GOALS.map((goal, i) => (
-            <Reveal key={goal.num} delay={i * 110}>
-              <div className="relative h-full rounded-2xl border border-mist/10 bg-mist/[0.04] p-6 transition-colors hover:border-mist/25">
-                <p className="font-display text-3xl font-bold text-ember">
-                  {goal.num}
-                </p>
-                <h3 className="font-display mt-3 text-lg font-bold text-mist">
+            <Reveal key={goal.num} delay={i * 100} className="h-full">
+              <div
+                className={`h-full border-b-2 border-mist/15 p-6 transition-colors hover:bg-mist/[0.05] md:border-b-0 sm:p-7 ${
+                  i < GOALS.length - 1 ? "md:border-r-2" : ""
+                }`}
+              >
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="font-heading text-4xl font-black leading-none tracking-[-0.06em] text-ember tabular-nums">
+                    {goal.num}
+                  </p>
+                  <span className="h-px w-8 bg-mist/25" aria-hidden="true" />
+                </div>
+                <h3 className="mt-6 font-heading text-lg font-extrabold uppercase leading-tight tracking-[-0.02em] text-mist">
                   {goal.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-mist/60">
+                <p className="mt-2 text-sm leading-relaxed text-mist/55">
                   {goal.body}
                 </p>
               </div>
@@ -60,11 +74,11 @@ export function Goals() {
           ))}
         </div>
 
-        <div className="relative mt-10 flex justify-center">
+        <div className="relative border-t-2 border-mist/15 p-6 sm:p-8">
           <Magnetic>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 rounded-full bg-mist px-8 py-3.5 text-sm font-semibold text-ink transition-colors hover:bg-ember-deep hover:text-white"
+              className="inline-flex items-center gap-3 border-2 border-mist bg-mist px-7 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-ink transition-colors hover:border-ember hover:bg-ember hover:text-parchment"
             >
               Help me get there <span aria-hidden="true">→</span>
             </a>

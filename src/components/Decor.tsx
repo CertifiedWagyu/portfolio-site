@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useInView } from "../hooks/useInView";
 
-/** Scroll-triggered rise + fade wrapper with stagger delay. */
+/** Scroll-triggered rise wrapper. Snaps into place instead of gliding. */
 export function Reveal({
   children,
   delay = 0,
@@ -18,8 +18,8 @@ export function Reveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`${className} transition-all duration-700 ease-out ${
-        isInView ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+      className={`${className} transition-[opacity,transform] duration-500 ease-out motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none ${
+        isInView ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >
       {children}
@@ -27,7 +27,7 @@ export function Reveal({
   );
 }
 
-/** Thin progress hairline across the very top of the page. */
+/** Solid progress bar pinned under the masthead. */
 export function ScrollProgress() {
   const [progress, setProgress] = useState(0);
 
@@ -43,11 +43,11 @@ export function ScrollProgress() {
   }, []);
 
   return (
-    <div className="fixed inset-x-0 top-0 z-50 h-px bg-transparent" aria-hidden="true">
-      <div
-        className="h-full bg-ember"
-        style={{ width: `${progress * 100}%` }}
-      />
+    <div
+      className="fixed inset-x-0 top-0 z-[60] h-[3px] bg-transparent"
+      aria-hidden="true"
+    >
+      <div className="h-full bg-ember" style={{ width: `${progress * 100}%` }} />
     </div>
   );
 }
@@ -71,31 +71,19 @@ export function BackToTop() {
 
   if (!state.visible) return null;
 
-  const radius = 17;
-  const circumference = 2 * Math.PI * radius;
-
   return (
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Back to top"
-      className="glass-panel fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full transition-transform hover:-translate-y-1"
+      className="hover-brutal fixed bottom-5 right-5 z-40 flex h-12 w-12 items-center justify-center border-2 border-coal bg-card font-mono text-base font-bold text-coal sm:bottom-7 sm:right-7"
     >
-      <svg viewBox="0 0 44 44" className="absolute inset-0 h-full w-full -rotate-90">
-        <circle cx="22" cy="22" r={radius} fill="none" stroke="currentColor" strokeOpacity="0.12" strokeWidth="2.5" className="text-coal" />
-        <circle
-          cx="22"
-          cy="22"
-          r={radius}
-          fill="none"
-          stroke="var(--color-ember)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - state.progress)}
-        />
-      </svg>
-      <span className="text-sm font-bold text-coal">↑</span>
+      <span aria-hidden="true">↑</span>
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-1 bg-ember transition-[width] duration-150"
+        style={{ width: `${state.progress * 100}%` }}
+      />
     </button>
   );
 }
@@ -201,13 +189,13 @@ export function Magnetic({
   );
 }
 
-/** Hairline divider with a center dot. */
+/** Heavy rule with a solid square marker. */
 export function Divider({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center gap-3 ${className}`} aria-hidden="true">
-      <span className="h-px flex-1 bg-line" />
-      <span className="h-1 w-1 rounded-full bg-latte" />
-      <span className="h-px flex-1 bg-line" />
+      <span className="h-0.5 flex-1 bg-line" />
+      <span className="h-2 w-2 bg-ember" />
+      <span className="h-0.5 flex-1 bg-line" />
     </div>
   );
 }
@@ -220,11 +208,16 @@ export function EmptyState({
   hint: string;
 }) {
   return (
-    <div className="panel flex flex-col items-center rounded-2xl px-6 py-14 text-center">
-      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-ember/10 font-display text-lg text-ember">
+    <div className="flex flex-col items-start border-2 border-dashed border-line px-6 py-12">
+      <span
+        className="flex h-10 w-10 items-center justify-center bg-coal font-mono text-base text-parchment"
+        aria-hidden="true"
+      >
         ✦
       </span>
-      <p className="font-display mt-5 text-lg font-bold text-coal">{title}</p>
+      <p className="mt-5 font-heading text-lg font-extrabold uppercase tracking-tight text-coal">
+        {title}
+      </p>
       <p className="mt-1 max-w-xs text-sm text-fawn">{hint}</p>
     </div>
   );

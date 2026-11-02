@@ -177,8 +177,8 @@ export function CertificateForm({
         <p className="mb-3 font-mono text-xs uppercase tracking-wide text-text-muted">
           Preview
         </p>
-        <div className="rounded-2xl border border-border-light bg-surface-light/40 p-5">
-          <div className="mb-4 aspect-[4/3] overflow-hidden rounded-xl border border-border-light bg-gradient-to-br from-primary/15 via-surface-lighter to-accent/15">
+        <div className="border-2 border-border bg-surface-light p-5">
+          <div className="dot-faint mb-4 aspect-[4/3] overflow-hidden border-2 border-border bg-cream">
             {showNewPreview && filePreviewUrl ? (
               <img
                 src={filePreviewUrl}
@@ -204,23 +204,23 @@ export function CertificateForm({
             )}
           </div>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-heading text-base font-semibold">
+            <h3 className="font-heading text-base font-extrabold uppercase tracking-[-0.02em]">
               {input.title || "Certificate title"}
             </h3>
             <span
-              className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] ${
+              className={`shrink-0 border-2 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.14em] ${
                 input.visibility === "public"
-                  ? "bg-emerald-500/10 text-emerald-300"
-                  : "bg-amber-500/10 text-amber-300"
+                  ? "border-forest bg-forest/10 text-forest"
+                  : "border-border bg-coal/5 text-text-muted"
               }`}
             >
               {input.visibility}
             </span>
           </div>
-          <p className="mt-1 text-sm text-accent">
+          <p className="mt-1 text-sm text-ember">
             {input.organization || "Issuing organization"}
           </p>
-          <p className="mt-0.5 font-mono text-xs text-text-muted">
+          <p className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.12em] text-text-muted">
             {formatDate(input.date_received) || "Date received"}
           </p>
           {input.description && (
