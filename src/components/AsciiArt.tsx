@@ -203,11 +203,22 @@ interface PortraitGroup {
   cells: Int32Array;
 }
 
+interface PortraitSpark {
+  x: number;
+  y: number;
+  speed: number;
+  phase: number;
+  size: number;
+  hue: number;
+  glyph: string;
+}
+
 interface PortraitData {
   glyph: Uint8Array;
   reveal: Float32Array;
   groups: PortraitGroup[];
   glow: HTMLCanvasElement | null;
+  sparks: PortraitSpark[];
 }
 
 let portraitImage: HTMLImageElement | null = null;
@@ -743,6 +754,21 @@ export function AsciiArt({
 
       if (gctx && glowData) gctx.putImageData(glowData, 0, 0);
 
+      // Drifting star motes pulled from the artwork's sparkle motifs.
+      const sparkGlyphs = ["✦", "✧", "+", "·"];
+      const sparks: PortraitSpark[] = Array.from({ length: 20 }, (_, i) => {
+        const r = (k: number) => cellNoise(i * 13 + k, i * 7 + 91);
+        return {
+          x: r(1),
+          y: r(2),
+          speed: 3 + r(3) * 9,
+          phase: r(4) * Math.PI * 2,
+          size: 7 + Math.round(r(5) * 6),
+          hue: r(6) > 0.45 ? 318 + Math.round(r(7) * 22) : 222 + Math.round(r(7) * 26),
+          glyph: sparkGlyphs[Math.floor(r(8) * sparkGlyphs.length)],
+        };
+      });
+
       portrait = {
         glyph,
         reveal,
@@ -751,6 +777,7 @@ export function AsciiArt({
           cells: Int32Array.from(cells),
         })),
         glow: glowData ? glow : null,
+        sparks,
       };
       portraitKey = `${cols}x${rows}`;
     };
@@ -781,11 +808,34 @@ export function AsciiArt({
       const radius = Math.min(130, Math.max(66, Math.min(cols * cellW, rows * cellH) * 0.34));
       const radius2 = radius * radius;
       const hasPointer = !reduced && pointerX > -9999;
+      const panelW = cols * cellW;
+      const panelH = rows * cellH;
+
+      // Slow liquid drift: rows slide sideways, columns bob, so the hair and
+      // line art feel alive without smearing the glyph grid.
+      const wobbleX = new Float32Array(rows);
+      const wobbleY = new Float32Array(cols);
+      let floatX = 0;
+      let floatY = 0;
+      if (!reduced) {
+        floatX = Math.sin(time * 0.62) * 1.2;
+        floatY = Math.sin(time * 0.47 + 1.2) * 2.1;
+        for (let y = 0; y < rows; y++) {
+          wobbleX[y] =
+            Math.sin(y * 0.33 + time * 0.85) * 0.7 +
+            Math.sin(y * 0.11 - time * 0.52) * 0.4;
+        }
+        for (let x = 0; x < cols; x++) {
+          wobbleY[x] =
+            Math.cos(x * 0.27 + time * 0.66) * 0.55 +
+            Math.sin(x * 0.07 + time * 0.4) * 0.3;
+        }
+      }
 
       // Soft phosphor underlay: gives the glyphs a readable silhouette.
       if (portrait.glow) {
         ctx.save();
-        ctx.globalAlpha = 0.62;
+        ctx.globalAlpha = reduced ? 0.62 : 0.58 + Math.sin(time * 0.9) * 0.08;
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(
@@ -798,14 +848,34 @@ export function AsciiArt({
         ctx.restore();
       }
 
+      // Star motes drifting up through the empty backdrop.
+      if (!reduced) {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        for (const spark of portrait.sparks) {
+          const y =
+            (((spark.y * panelH - time * spark.speed * 6) % panelH) + panelH) %
+            panelH;
+          const twinkle = 0.5 + 0.5 * Math.sin(time * 1.7 + spark.phase);
+          ctx.globalAlpha = 0.06 + twinkle * 0.36;
+          ctx.fillStyle = `hsl(${spark.hue}, 90%, 78%)`;
+          ctx.font = `${spark.size}px "JetBrains Mono", ui-monospace, monospace`;
+          ctx.fillText(spark.glyph, spark.x * panelW, y);
+        }
+        ctx.restore();
+      }
+
+      ctx.save();
+      ctx.globalAlpha = reduced ? 1 : 0.93 + Math.sin(time * 1.15) * 0.05;
+
       for (const group of portrait.groups) {
         ctx.fillStyle = group.color;
         for (let n = 0; n < group.cells.length; n++) {
           const idx = group.cells[n];
           const x = idx % cols;
           const y = (idx / cols) | 0;
-          const px = x * cellW + cellW / 2;
-          const py = y * cellH + cellH / 2;
+          const px = x * cellW + cellW / 2 + wobbleX[y] + floatX;
+          const py = y * cellH + cellH / 2 + wobbleY[x] + floatY;
 
           if (progress < 1) {
             const at = portrait.reveal[idx];
@@ -834,6 +904,7 @@ export function AsciiArt({
           ctx.fillText(PORTRAIT_GLYPHS[gi], px, py);
         }
       }
+      ctx.restore();
 
       if (hasPointer) {
         const glow = ctx.createRadialGradient(
