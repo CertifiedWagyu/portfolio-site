@@ -320,6 +320,9 @@ export function AsciiArt({
     let cellGlyph = new Uint8Array(cols * rows);
     let pointerX = -99999;
     let pointerY = -99999;
+    let smoothX = -99999;
+    let smoothY = -99999;
+    let pointerPower = 0;
 
     const ensureCellBuffers = () => {
       const total = cols * rows;
@@ -798,18 +801,32 @@ export function AsciiArt({
         });
     };
 
-    const drawPortrait = (time: number) => {
+    const drawPortrait = (time: number, dt = 1 / 30) => {
       if (!portrait) return;
 
       const settled = reduced || !running;
       const elapsed = (performance.now() - portraitStart) / 1000;
       const progress = settled || portraitStart === 0 ? 1 : Math.min(1, elapsed / 1.7);
       const frameSeed = Math.floor(time * 14);
-      const radius = Math.min(130, Math.max(66, Math.min(cols * cellW, rows * cellH) * 0.34));
+      const radius = Math.min(140, Math.max(72, Math.min(cols * cellW, rows * cellH) * 0.3));
       const radius2 = radius * radius;
-      const hasPointer = !reduced && pointerX > -9999;
       const panelW = cols * cellW;
       const panelH = rows * cellH;
+
+      // Eased reticle: glides after the pointer and fades instead of snapping.
+      const active = !reduced && pointerX > -9999;
+      pointerPower += ((active ? 1 : 0) - pointerPower) * Math.min(1, dt * 9);
+      if (pointerPower < 0.003) pointerPower = 0;
+      if (active) {
+        if (smoothX < -9999 || pointerPower < 0.05) {
+          smoothX = pointerX;
+          smoothY = pointerY;
+        }
+        const follow = Math.min(1, dt * 16);
+        smoothX += (pointerX - smoothX) * follow;
+        smoothY += (pointerY - smoothY) * follow;
+      }
+      const hasPointer = pointerPower > 0.003;
 
       // Slow liquid drift: rows slide sideways, columns bob, so the hair and
       // line art feel alive without smearing the glyph grid.
@@ -874,8 +891,8 @@ export function AsciiArt({
           const idx = group.cells[n];
           const x = idx % cols;
           const y = (idx / cols) | 0;
-          const px = x * cellW + cellW / 2 + wobbleX[y] + floatX;
-          const py = y * cellH + cellH / 2 + wobbleY[x] + floatY;
+          let px = x * cellW + cellW / 2 + wobbleX[y] + floatX;
+          let py = y * cellH + cellH / 2 + wobbleY[x] + floatY;
 
           if (progress < 1) {
             const at = portrait.reveal[idx];
@@ -893,12 +910,20 @@ export function AsciiArt({
 
           let gi = portrait.glyph[idx];
           if (hasPointer) {
-            const dx = px - pointerX;
-            const dy = py - pointerY;
-            if (dx * dx + dy * dy < radius2) {
-              const flick = (idx * 7 + frameSeed) % 29;
-              if (flick === 0) gi = PORTRAIT_GLYPHS.length - 1;
-              else if (flick === 1) gi = Math.max(1, gi - 2);
+            const dx = px - smoothX;
+            const dy = py - smoothY;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < radius2) {
+              const dist = Math.sqrt(d2) || 0.001;
+              const falloff = 1 - dist / radius;
+              const push = falloff * falloff * 4.5;
+              // Lens bulge: ink slides outward and thickens under the reticle.
+              px += (dx / dist) * push;
+              py += (dy / dist) * push;
+              gi = Math.min(
+                PORTRAIT_GLYPHS.length - 1,
+                Math.round(gi + falloff * falloff * 3.2),
+              );
             }
           }
           ctx.fillText(PORTRAIT_GLYPHS[gi], px, py);
@@ -908,20 +933,83 @@ export function AsciiArt({
 
       if (hasPointer) {
         const glow = ctx.createRadialGradient(
-          pointerX,
-          pointerY,
+          smoothX,
+          smoothY,
           0,
-          pointerX,
-          pointerY,
+          smoothX,
+          smoothY,
           radius,
         );
-        glow.addColorStop(0, "rgba(170, 200, 255, 0.14)");
-        glow.addColorStop(0.5, "rgba(170, 200, 255, 0.06)");
+        glow.addColorStop(0, `rgba(170, 200, 255, ${0.26 * pointerPower})`);
+        glow.addColorStop(0.45, `rgba(190, 160, 255, ${0.13 * pointerPower})`);
         glow.addColorStop(1, "rgba(170, 200, 255, 0)");
         ctx.save();
         ctx.globalCompositeOperation = "lighter";
         ctx.fillStyle = glow;
-        ctx.fillRect(pointerX - radius, pointerY - radius, radius * 2, radius * 2);
+        ctx.fillRect(smoothX - radius, smoothY - radius, radius * 2, radius * 2);
+        ctx.restore();
+
+        // HUD reticle: orbit ring, radar sweep, ticks, crosshair, live coords.
+        const ring =
+          radius * 0.44 + 6 * (1 - pointerPower) + Math.sin(time * 2.2) * 1.2;
+        const spin = time * 0.9;
+        ctx.save();
+        ctx.globalAlpha = pointerPower;
+
+        ctx.strokeStyle = "rgba(120, 170, 255, 0.2)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(smoothX, smoothY, ring, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = "rgba(255, 96, 186, 0.85)";
+        ctx.lineWidth = 1.25;
+        ctx.setLineDash([6, 8]);
+        ctx.beginPath();
+        ctx.arc(smoothX, smoothY, ring, spin, spin + Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.strokeStyle = "rgba(150, 200, 255, 0.75)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(smoothX, smoothY, ring - 3, spin * 1.7, spin * 1.7 + 0.85);
+        ctx.stroke();
+        ctx.lineWidth = 1.25;
+
+        ctx.strokeStyle = "rgba(210, 228, 255, 0.75)";
+        for (let i = 0; i < 4; i++) {
+          const a = spin * 0.5 + (i * Math.PI) / 2;
+          const c = Math.cos(a);
+          const s = Math.sin(a);
+          ctx.beginPath();
+          ctx.moveTo(smoothX + c * (ring + 4), smoothY + s * (ring + 4));
+          ctx.lineTo(smoothX + c * (ring + 11), smoothY + s * (ring + 11));
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+        ctx.beginPath();
+        ctx.moveTo(smoothX - 9, smoothY);
+        ctx.lineTo(smoothX - 3, smoothY);
+        ctx.moveTo(smoothX + 3, smoothY);
+        ctx.lineTo(smoothX + 9, smoothY);
+        ctx.moveTo(smoothX, smoothY - 9);
+        ctx.lineTo(smoothX, smoothY - 3);
+        ctx.moveTo(smoothX, smoothY + 3);
+        ctx.lineTo(smoothX, smoothY + 9);
+        ctx.stroke();
+
+        const label = `X ${Math.round(smoothX)}  Y ${Math.round(smoothY)}`;
+        const labelRight = smoothX + ring + 90 > panelW;
+        ctx.font = '8px "JetBrains Mono", ui-monospace, monospace';
+        ctx.textAlign = labelRight ? "right" : "left";
+        ctx.fillStyle = "rgba(225, 238, 255, 0.8)";
+        ctx.fillText(
+          label,
+          smoothX + (labelRight ? -ring - 14 : ring + 14),
+          smoothY - 2,
+        );
         ctx.restore();
       }
 
@@ -964,7 +1052,7 @@ export function AsciiArt({
       else if (variant === "tesseract") drawTesseract(time);
       else if (variant === "field") drawField(time);
       else if (variant === "gothic") drawGothic(time);
-      else if (variant === "portrait") drawPortrait(time);
+      else if (variant === "portrait") drawPortrait(time, dt);
       else drawDonut(time);
     };
 
@@ -1064,7 +1152,7 @@ export function AsciiArt({
     };
 
     layout();
-    if (variant === "portrait") wrap.style.cursor = "crosshair";
+    if (variant === "portrait") wrap.style.cursor = reduced ? "crosshair" : "none";
     ensurePortrait();
     if (draggable) {
       updateWTarget();
