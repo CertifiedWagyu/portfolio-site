@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import mark from "../assets/portrait-mark.png";
 import { useAuth } from "../context/useAuth";
 import { navigate } from "../lib/router";
 import type { AdminPage } from "./adminTypes";
@@ -84,9 +85,13 @@ export function AdminLayout({
             onClick={() => navigate("/")}
             className="flex h-full w-full items-center gap-3 px-4 text-left transition-colors hover:bg-cream"
           >
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-coal font-mono text-[10px] font-bold text-parchment">
-              DA
-            </span>
+            <img
+              src={mark}
+              alt=""
+              width={32}
+              height={32}
+              className="h-8 w-8 shrink-0 border-2 border-coal object-cover"
+            />
             <span className="min-w-0">
               <span className="block font-heading text-xs font-extrabold uppercase tracking-[-0.01em]">
                 Admin

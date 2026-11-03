@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import mark from "../assets/portrait-mark.png";
 import { useScrollSpy } from "../hooks/useFx";
 import { useTheme } from "../hooks/useTheme";
 import { openCommandPalette } from "../lib/commandPalette";
@@ -49,8 +50,6 @@ export function Navbar({ name }: { name: string }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("");
-
   return (
     <header
       className={`fixed inset-x-0 top-0 z-40 border-b-2 border-coal bg-parchment transition-shadow duration-150 ${
@@ -62,9 +61,13 @@ export function Navbar({ name }: { name: string }) {
           href="#home"
           className="flex min-w-0 flex-1 items-center gap-2.5 border-r-2 border-coal px-3 sm:gap-3 sm:px-4 lg:flex-none"
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-coal font-mono text-[10px] font-bold tracking-tight text-parchment sm:h-8 sm:w-8">
-            {initials}
-          </span>
+          <img
+            src={mark}
+            alt=""
+            width={32}
+            height={32}
+            className="h-7 w-7 shrink-0 border-2 border-coal object-cover sm:h-8 sm:w-8"
+          />
           <span className="truncate font-heading text-[13px] font-extrabold uppercase tracking-[-0.01em] text-coal sm:text-sm">
             {name}
           </span>
