@@ -4,7 +4,7 @@ import { About } from "./About";
 import { Certificates } from "./Certificates";
 import { CommandPalette } from "./CommandPalette";
 import { Contact } from "./Contact";
-import { BackToTop, ScrollProgress } from "./Decor";
+import { BackToTop, ScrollProgress, Ticker } from "./Decor";
 import { EasterEgg } from "./EasterEgg";
 import { Education } from "./Education";
 import { Footer } from "./Footer";
@@ -23,7 +23,8 @@ export function Site() {
       <Navbar name={siteProfile.displayName} />
       <main className="relative z-10">
         <Hero siteProfile={siteProfile} />
-        <About siteProfile={siteProfile} />
+        <Ticker />
+        <About siteProfile={siteProfile} flushTop />
         <Skills />
         <Certificates />
         <Games />

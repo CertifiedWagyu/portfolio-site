@@ -9,6 +9,7 @@ export function Section({
   description,
   children,
   tone = "plain",
+  flushTop = false,
 }: {
   id: string;
   index: string;
@@ -17,6 +18,8 @@ export function Section({
   description?: string;
   children: ReactNode;
   tone?: "plain" | "tint";
+  /** Skip the top rule when the preceding block already supplies one. */
+  flushTop?: boolean;
 }) {
   const { ref, isInView } = useInView();
   const shown = "translate-y-0 opacity-100";
@@ -25,9 +28,9 @@ export function Section({
   return (
     <section
       id={id}
-      className={`relative scroll-mt-16 border-t-2 border-coal ${
-        tone === "tint" ? "bg-cream" : "bg-parchment"
-      }`}
+      className={`relative scroll-mt-16 ${
+        flushTop ? "" : "border-t-2 border-coal"
+      } ${tone === "tint" ? "bg-cream" : "bg-parchment"}`}
     >
       <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6">
         <div

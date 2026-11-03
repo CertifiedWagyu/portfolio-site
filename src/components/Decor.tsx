@@ -52,6 +52,46 @@ export function ScrollProgress() {
   );
 }
 
+const TICKER_ITEMS = [
+  "Available for internships",
+  "Web development",
+  "Game design",
+  "BS Information Technology",
+  "Davao City · PHT",
+  "Open to collaboration",
+];
+
+/** Edge-to-edge brutalist news ticker. Pauses on hover, still under reduced motion. */
+export function Ticker() {
+  return (
+    <div className="ticker group relative overflow-hidden border-y-2 border-coal bg-coal py-2.5">
+      <div
+        className="ticker-track flex w-max whitespace-nowrap font-mono text-[10px] font-bold uppercase tracking-[0.28em]"
+        aria-hidden="true"
+      >
+        {[0, 1].map((copy) => (
+          <div key={copy} className="flex items-center gap-8 pr-8">
+            {TICKER_ITEMS.map((item, i) => (
+              <span key={`${copy}-${i}`} className="flex items-center gap-8">
+                <span className={i % 3 === 0 ? "accent-invert" : "text-parchment"}>
+                  {item}
+                </span>
+                <span className="accent-invert" aria-hidden="true">
+                  ✦
+                </span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+      <span className="sr-only">
+        Available for internships · Web development · Game design · BS Information
+        Technology · Davao City · Open to collaboration
+      </span>
+    </div>
+  );
+}
+
 export function BackToTop() {
   const [state, setState] = useState({ visible: false, progress: 0 });
 

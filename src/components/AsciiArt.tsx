@@ -1,10 +1,15 @@
 import { useEffect, useRef } from "react";
+import portraitUrl from "../assets/portrait.jpg";
 
-type Variant = "donut" | "wave" | "tesseract" | "field" | "gothic";
+type Variant = "donut" | "wave" | "tesseract" | "field" | "gothic" | "portrait";
 
 const DONUT_GLYPHS = ".,-~:;=!*#$@";
 const HYPER_GLYPHS = ".,-~:;=+*#%@";
 const FIELD_GLYPHS = "·.,:;~-=+*#";
+
+/** Photo-derived portrait: blank → solid ink, tuned for a dark terminal. */
+const PORTRAIT_GLYPHS = " .:-=+*#%@";
+const PORTRAIT_SCRAMBLE = "#%&@*+=~";
 
 /** Intensity buckets for the field: [upper bound, color mix, alpha]. */
 const FIELD_BUCKETS: Array<[number, number, number]> = [
@@ -161,6 +166,71 @@ function bloodColor(mix: number, alpha?: number): string {
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
+/** Stable pseudo-random number in [0,1) for a grid cell. */
+function cellNoise(x: number, y: number): number {
+  const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const l = (max + min) / 2;
+  if (max === min) return [0, 0, l];
+
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  let h: number;
+  if (max === rn) h = (gn - bn) / d + (gn < bn ? 6 : 0);
+  else if (max === gn) h = (bn - rn) / d + 2;
+  else h = (rn - gn) / d + 4;
+  return [h * 60, s, l];
+}
+
+/** Neon terminal ink: keep the photo's hue, lift saturation and value. */
+function portraitInk(h: number, s: number, value: number): string {
+  const hue = Math.round(h / 12) * 12;
+  const sat = Math.round(Math.min(1, 0.5 + s * 0.55) * 20) * 5;
+  const light = Math.round(Math.min(0.86, 0.34 + value * 0.5) * 20) * 5;
+  return `hsl(${hue}, ${sat}%, ${light}%)`;
+}
+
+interface PortraitGroup {
+  color: string;
+  cells: Int32Array;
+}
+
+interface PortraitData {
+  glyph: Uint8Array;
+  reveal: Float32Array;
+  groups: PortraitGroup[];
+  glow: HTMLCanvasElement | null;
+}
+
+let portraitImage: HTMLImageElement | null = null;
+let portraitLoader: Promise<HTMLImageElement> | null = null;
+
+/** Load the source portrait once and share it between mounts. */
+function loadPortraitImage(): Promise<HTMLImageElement> {
+  if (portraitImage) return Promise.resolve(portraitImage);
+  if (!portraitLoader) {
+    portraitLoader = new Promise((resolve, reject) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.onload = () => {
+        portraitImage = img;
+        resolve(img);
+      };
+      img.onerror = () => reject(new Error("portrait could not be loaded"));
+      img.src = portraitUrl;
+    });
+  }
+  return portraitLoader;
+}
+
 /**
  * Animated ASCII art rendered to a canvas for performance.
  * Two-tone accent ramp, DPR-aware, pauses off-screen / hidden,
@@ -195,6 +265,10 @@ export function AsciiArt({
     let visible = true;
     let raf = 0;
     let lastDraw = 0;
+    let cancelled = false;
+    let portrait: PortraitData | null = null;
+    let portraitKey = "";
+    let portraitStart = 0;
 
     const draggable = interactive && variant === "tesseract" && !reduced;
     let dragging = false;
@@ -551,6 +625,251 @@ export function AsciiArt({
       }
     };
 
+    /**
+     * Downsamples the source photo to the current character grid.
+     * Cells keep the photo's hue but are lifted into a neon terminal palette.
+     */
+    const buildPortrait = (img: HTMLImageElement) => {
+      const total = cols * rows;
+      const sample = document.createElement("canvas");
+      sample.width = cols;
+      sample.height = rows;
+      const sctx = sample.getContext("2d", { willReadFrequently: true });
+      if (!sctx) return;
+      sctx.imageSmoothingEnabled = true;
+      sctx.imageSmoothingQuality = "high";
+
+      // Fit the full square portrait inside the cell grid. Cells are taller
+      // than wide, so the destination rect is corrected to keep proportions.
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const srcAspect = iw / ih;
+      const cellAspect = cellH / cellW;
+      let dh = rows;
+      let dw = dh * srcAspect * cellAspect;
+      if (dw > cols) {
+        dw = cols;
+        dh = dw / (srcAspect * cellAspect);
+      }
+      const dx = (cols - dw) / 2;
+      const dy = (rows - dh) / 2;
+      sctx.drawImage(img, 0, 0, iw, ih, dx, dy, dw, dh);
+
+      const src = sctx.getImageData(0, 0, cols, rows).data;
+      const lumaGrid = new Float32Array(total);
+      const hueGrid = new Float32Array(total);
+      const satGrid = new Float32Array(total);
+      const keep = new Uint8Array(total);
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const i = x + y * cols;
+          const o = i * 4;
+          const r = src[o];
+          const g = src[o + 1];
+          const b = src[o + 2];
+          const [hue, sat] = rgbToHsl(r, g, b);
+          const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+          // Drop the flat purple backdrop so the silhouette reads cleanly.
+          if (luma < 0.36 && sat > 0.2 && hue > 234 && hue < 282) continue;
+
+          keep[i] = 1;
+          lumaGrid[i] = luma;
+          hueGrid[i] = hue;
+          satGrid[i] = sat;
+        }
+      }
+
+      const glyph = new Uint8Array(total);
+      const reveal = new Float32Array(total);
+      const buckets = new Map<string, number[]>();
+
+      const glow = document.createElement("canvas");
+      glow.width = cols;
+      glow.height = rows;
+      const gctx = glow.getContext("2d");
+      const glowData = gctx?.createImageData(cols, rows) ?? null;
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          const i = x + y * cols;
+          // Left-to-right decode with a stable random offset per cell.
+          reveal[i] = (x / cols) * 0.5 + cellNoise(x, y) * 0.5;
+          if (!keep[i]) continue;
+
+          // Local contrast lifts hair strands and line art out of the flat mass.
+          let sum = 0;
+          let n = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              const xx = x + dx;
+              const yy = y + dy;
+              if (xx < 0 || xx >= cols || yy < 0 || yy >= rows) continue;
+              sum += lumaGrid[xx + yy * cols];
+              n++;
+            }
+          }
+          const base = n > 0 ? sum / n : lumaGrid[i];
+          const luma = Math.max(0, lumaGrid[i] + (lumaGrid[i] - base) * 0.9);
+          const raw = (luma - 0.07) / 0.85;
+          const value = raw <= 0 ? 0 : Math.pow(raw > 1 ? 1 : raw, 0.82);
+
+          if (glowData) {
+            const o = i * 4;
+            glowData.data[o] = Math.min(255, src[o] * 1.1 + 14);
+            glowData.data[o + 1] = Math.min(255, src[o + 1] * 1.1 + 14);
+            glowData.data[o + 2] = Math.min(255, src[o + 2] * 1.1 + 14);
+            glowData.data[o + 3] = Math.round(
+              255 * Math.min(1, Math.pow(value, 1.2) * 0.78),
+            );
+          }
+
+          if (value < 0.12) continue;
+
+          glyph[i] = Math.max(
+            1,
+            Math.min(
+              PORTRAIT_GLYPHS.length - 1,
+              Math.round(value * (PORTRAIT_GLYPHS.length - 1)),
+            ),
+          );
+          const color = portraitInk(hueGrid[i], satGrid[i], value);
+          const list = buckets.get(color);
+          if (list) list.push(i);
+          else buckets.set(color, [i]);
+        }
+      }
+
+      if (gctx && glowData) gctx.putImageData(glowData, 0, 0);
+
+      portrait = {
+        glyph,
+        reveal,
+        groups: Array.from(buckets, ([color, cells]) => ({
+          color,
+          cells: Int32Array.from(cells),
+        })),
+        glow: glowData ? glow : null,
+      };
+      portraitKey = `${cols}x${rows}`;
+    };
+
+    const ensurePortrait = () => {
+      if (variant !== "portrait") return;
+      if (portrait && portraitKey === `${cols}x${rows}`) return;
+      loadPortraitImage()
+        .then((img) => {
+          if (cancelled) return;
+          buildPortrait(img);
+          if (!portraitStart) portraitStart = performance.now();
+          if (!running) renderOnce();
+        })
+        .catch((err) => {
+          // Missing art should never break the page.
+          if (import.meta.env.DEV) console.error("[portrait] failed", err);
+        });
+    };
+
+    const drawPortrait = (time: number) => {
+      if (!portrait) return;
+
+      const settled = reduced || !running;
+      const elapsed = (performance.now() - portraitStart) / 1000;
+      const progress = settled || portraitStart === 0 ? 1 : Math.min(1, elapsed / 1.7);
+      const frameSeed = Math.floor(time * 14);
+      const radius = Math.min(130, Math.max(66, Math.min(cols * cellW, rows * cellH) * 0.34));
+      const radius2 = radius * radius;
+      const hasPointer = !reduced && pointerX > -9999;
+
+      // Soft phosphor underlay: gives the glyphs a readable silhouette.
+      if (portrait.glow) {
+        ctx.save();
+        ctx.globalAlpha = 0.62;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(
+          portrait.glow,
+          0,
+          0,
+          cols * cellW,
+          rows * cellH,
+        );
+        ctx.restore();
+      }
+
+      for (const group of portrait.groups) {
+        ctx.fillStyle = group.color;
+        for (let n = 0; n < group.cells.length; n++) {
+          const idx = group.cells[n];
+          const x = idx % cols;
+          const y = (idx / cols) | 0;
+          const px = x * cellW + cellW / 2;
+          const py = y * cellH + cellH / 2;
+
+          if (progress < 1) {
+            const at = portrait.reveal[idx];
+            if (progress < at) continue;
+            if (progress - at < 0.07) {
+              const seed = (idx * 2654435761 + frameSeed * 40503) >>> 0;
+              ctx.fillText(
+                PORTRAIT_SCRAMBLE[seed % PORTRAIT_SCRAMBLE.length],
+                px,
+                py,
+              );
+              continue;
+            }
+          }
+
+          let gi = portrait.glyph[idx];
+          if (hasPointer) {
+            const dx = px - pointerX;
+            const dy = py - pointerY;
+            if (dx * dx + dy * dy < radius2) {
+              const flick = (idx * 7 + frameSeed) % 29;
+              if (flick === 0) gi = PORTRAIT_GLYPHS.length - 1;
+              else if (flick === 1) gi = Math.max(1, gi - 2);
+            }
+          }
+          ctx.fillText(PORTRAIT_GLYPHS[gi], px, py);
+        }
+      }
+
+      if (hasPointer) {
+        const glow = ctx.createRadialGradient(
+          pointerX,
+          pointerY,
+          0,
+          pointerX,
+          pointerY,
+          radius,
+        );
+        glow.addColorStop(0, "rgba(170, 200, 255, 0.14)");
+        glow.addColorStop(0.5, "rgba(170, 200, 255, 0.06)");
+        glow.addColorStop(1, "rgba(170, 200, 255, 0)");
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.fillStyle = glow;
+        ctx.fillRect(pointerX - radius, pointerY - radius, radius * 2, radius * 2);
+        ctx.restore();
+      }
+
+      if (!reduced) {
+        const band = cellH * 5;
+        const span = rows * cellH + band * 2;
+        const top = ((time * 24) % span) - band;
+        const sweep = ctx.createLinearGradient(0, top, 0, top + band);
+        sweep.addColorStop(0, "rgba(150, 190, 255, 0)");
+        sweep.addColorStop(0.5, "rgba(150, 190, 255, 0.07)");
+        sweep.addColorStop(1, "rgba(150, 190, 255, 0)");
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.fillStyle = sweep;
+        ctx.fillRect(0, top, cols * cellW, band);
+        ctx.restore();
+      }
+    };
+
     let time = 0.35;
 
     const frame = (t: number) => {
@@ -574,6 +893,7 @@ export function AsciiArt({
       else if (variant === "tesseract") drawTesseract(time);
       else if (variant === "field") drawField(time);
       else if (variant === "gothic") drawGothic(time);
+      else if (variant === "portrait") drawPortrait(time);
       else drawDonut(time);
     };
 
@@ -583,6 +903,7 @@ export function AsciiArt({
       else if (variant === "tesseract") drawTesseract(1.1);
       else if (variant === "field") drawField(1.5);
       else if (variant === "gothic") drawGothic(1.5);
+      else if (variant === "portrait") drawPortrait(1.5);
       else drawDonut(0.9);
     };
 
@@ -609,6 +930,7 @@ export function AsciiArt({
     const relayout = () => {
       layout();
       updateWTarget();
+      ensurePortrait();
       if (!running) renderOnce();
     };
 
@@ -659,7 +981,20 @@ export function AsciiArt({
       pointerY = -99999;
     };
 
+    const trackPortrait = variant === "portrait" && !reduced;
+    const onPortraitMove = (e: PointerEvent) => {
+      const rect = wrap.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+    };
+    const onPortraitLeave = () => {
+      pointerX = -99999;
+      pointerY = -99999;
+    };
+
     layout();
+    if (variant === "portrait") wrap.style.cursor = "crosshair";
+    ensurePortrait();
     if (draggable) {
       updateWTarget();
       wrap.style.cursor = "grab";
@@ -676,6 +1011,11 @@ export function AsciiArt({
     if (trackField) {
       window.addEventListener("pointermove", onFieldMove, { passive: true });
       document.addEventListener("pointerleave", onFieldLeave);
+    }
+    if (trackPortrait) {
+      wrap.addEventListener("pointermove", onPortraitMove, { passive: true });
+      wrap.addEventListener("pointerleave", onPortraitLeave);
+      wrap.addEventListener("pointercancel", onPortraitLeave);
     }
     if (reduced) {
       renderOnce();
@@ -707,10 +1047,14 @@ export function AsciiArt({
     document.addEventListener("visibilitychange", onVis);
 
     return () => {
+      cancelled = true;
       stop();
       ro.disconnect();
       io.disconnect();
       document.removeEventListener("visibilitychange", onVis);
+      wrap.removeEventListener("pointermove", onPortraitMove);
+      wrap.removeEventListener("pointerleave", onPortraitLeave);
+      wrap.removeEventListener("pointercancel", onPortraitLeave);
       wrap.removeEventListener("pointerdown", onPointerDown);
       wrap.removeEventListener("pointermove", onPointerMove);
       wrap.removeEventListener("pointerup", onPointerUp);

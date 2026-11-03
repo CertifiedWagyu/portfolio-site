@@ -238,6 +238,22 @@
   animation: blink 1.1s steps(2, start) infinite;
 }
 
+/* ---- Edge-to-edge ticker ---- */
+.ticker-track {
+  animation: ticker-slide 36s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+@keyframes ticker-slide {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
 @keyframes blink {
   to {
     visibility: hidden;
@@ -319,6 +335,7 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-blink,
   .animate-aurora,
+  .ticker-track,
   .secret-trigger.secret-armed,
   .secret-dot,
   .secret-whisper,

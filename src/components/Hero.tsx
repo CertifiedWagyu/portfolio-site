@@ -265,21 +265,61 @@ export function Hero({ siteProfile }: { siteProfile: SiteProfile }) {
           >
             <div className="border-2 border-coal bg-card">
               <div className="flex items-center justify-between border-b-2 border-coal px-4 py-2 font-mono text-[9px] font-bold uppercase tracking-[0.22em]">
-                <span className="text-coal">4D projection</span>
-                <span className="text-ember">Drag to rotate</span>
+                <span className="text-coal">Subject / 001</span>
+                <span className="flex items-center gap-2 text-ember">
+                  <span
+                    className="h-1.5 w-1.5 animate-pulse bg-ember motion-reduce:animate-none"
+                    aria-hidden="true"
+                  />
+                  live render
+                </span>
               </div>
-              <div className="grid-faint">
-                <AsciiArt
-                  variant="tesseract"
-                  className="h-52 w-full sm:h-64"
-                  fontSize={12}
-                  interactive
+
+              <div className="relative isolate overflow-hidden bg-[#07070c]">
+                <div
+                  className="pointer-events-none absolute inset-0 grid-ink opacity-70"
+                  aria-hidden="true"
                 />
+                <AsciiArt
+                  variant="portrait"
+                  className="relative aspect-square w-full"
+                  fontSize={7}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(to_bottom,rgba(255,255,255,0.05)_0px,rgba(255,255,255,0.05)_1px,transparent_1px,transparent_3px)] opacity-60"
+                  aria-hidden="true"
+                />
+                <span
+                  className="pointer-events-none absolute left-2 top-2 h-4 w-4 border-l-2 border-t-2 border-parchment/40"
+                  aria-hidden="true"
+                />
+                <span
+                  className="pointer-events-none absolute right-2 top-2 h-4 w-4 border-r-2 border-t-2 border-parchment/40"
+                  aria-hidden="true"
+                />
+                <span
+                  className="pointer-events-none absolute bottom-2 left-2 h-4 w-4 border-b-2 border-l-2 border-parchment/40"
+                  aria-hidden="true"
+                />
+                <span
+                  className="pointer-events-none absolute bottom-2 right-2 h-4 w-4 border-b-2 border-r-2 border-parchment/40"
+                  aria-hidden="true"
+                />
+                <div className="pointer-events-none absolute inset-x-4 top-3 flex justify-between font-mono text-[8px] uppercase tracking-[0.24em] text-parchment/45">
+                  <span>ASCII.scan</span>
+                  <span>RGB / 16M</span>
+                </div>
+                <div className="pointer-events-none absolute inset-x-4 bottom-3 flex justify-between font-mono text-[8px] uppercase tracking-[0.24em] text-parchment/45">
+                  <span>live / 30fps</span>
+                  <span className="text-parchment/70">signal 98.2%</span>
+                </div>
               </div>
+
               <div className="flex items-center justify-between border-t-2 border-coal px-4 py-2 font-mono text-[9px] uppercase tracking-[0.2em] text-latte">
-                <span>tesseract.core-4d</span>
+                <span>portrait.core-001</span>
                 <span className="flex items-center gap-1.5 text-ember">
-                  synced
+                  <span className="hidden sm:inline">cursor: scan</span>
+                  <span className="sm:hidden">synced</span>
                   <span className="h-1.5 w-1.5 bg-ember" aria-hidden="true" />
                 </span>
               </div>

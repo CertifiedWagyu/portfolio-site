@@ -13,7 +13,13 @@ const FACTS = [
 
 const INTERESTS = ["Web Dev", "Design", "Games", "Photo", "Video", "Music"];
 
-export function About({ siteProfile }: { siteProfile: SiteProfile }) {
+export function About({
+  siteProfile,
+  flushTop = false,
+}: {
+  siteProfile: SiteProfile;
+  flushTop?: boolean;
+}) {
   const manilaTime = useClock("Asia/Manila");
 
   return (
@@ -23,6 +29,7 @@ export function About({ siteProfile }: { siteProfile: SiteProfile }) {
       eyebrow="Identity"
       title="A developer in the making"
       description="Who I am, what I study, and what I care about building."
+      flushTop={flushTop}
     >
       <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
         <Reveal className="lg:col-span-7">
