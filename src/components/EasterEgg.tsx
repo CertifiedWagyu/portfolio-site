@@ -20,6 +20,9 @@ const TEASED_KEY = "site:secret-teased";
 const WHISPER_DELAY_MS = 22000;
 const TRIGGER = "[data-secret-trigger]";
 
+/** Fired by any element that should reveal the payload in one click. */
+export const OPEN_SECRET_EVENT = "site:open-secret";
+
 /** Hidden image payload revealed by the monogram or the Konami code. */
 export function EasterEgg() {
   const [open, setOpen] = useState(false);
@@ -128,6 +131,12 @@ export function EasterEgg() {
     const timer = window.setTimeout(() => setWhisper(false), 9000);
     return () => window.clearTimeout(timer);
   }, [whisper]);
+
+  useEffect(() => {
+    const onOpen = () => reveal();
+    window.addEventListener(OPEN_SECRET_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_SECRET_EVENT, onOpen);
+  }, [reveal]);
 
   useEffect(() => {
     if (!open) return;

@@ -332,6 +332,55 @@
   animation: secret-whisper-dot 1.8s steps(2, end) infinite;
 }
 
+/* ---- Bottom-right mascot ---- */
+.stocking-btn {
+  transition: transform 120ms steps(2, end);
+}
+
+.stocking-btn:hover,
+.stocking-btn:focus-visible {
+  transform: translate(-1px, -3px);
+}
+
+.stocking-btn:active {
+  transform: translate(2px, 1px);
+}
+
+.stocking-art {
+  transform-origin: 50% 100%;
+  filter: drop-shadow(3px 3px 0 rgba(9, 9, 11, 0.9));
+  animation: stocking-bob 5.2s ease-in-out infinite;
+}
+
+.stocking-btn:hover .stocking-art,
+.stocking-btn:focus-visible .stocking-art {
+  filter: drop-shadow(5px 7px 0 rgba(9, 9, 11, 0.9));
+}
+
+.stocking-bubble {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 140ms steps(2, end),
+    transform 140ms steps(2, end);
+}
+
+.stocking-dock:hover .stocking-bubble,
+.stocking-dock:focus-within .stocking-bubble {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes stocking-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.5deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(0.5deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-blink,
   .animate-aurora,
@@ -340,9 +389,19 @@
   .secret-dot,
   .secret-whisper,
   .secret-whisper-dot,
+  .stocking-art,
+  .stocking-bubble,
   .hover-brutal {
     animation: none;
     transition: none;
+  }
+  .stocking-btn {
+    transition: none;
+  }
+  .stocking-btn:hover,
+  .stocking-btn:focus-visible,
+  .stocking-btn:active {
+    transform: none;
   }
   .hover-brutal:hover {
     transform: none;

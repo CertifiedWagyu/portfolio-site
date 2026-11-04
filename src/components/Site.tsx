@@ -12,6 +12,7 @@ import { Games } from "./Games";
 import { Goals } from "./Goals";
 import { Hero } from "./Hero";
 import { Navbar } from "./Navbar";
+import { SecretMascot } from "./SecretMascot";
 import { Skills } from "./Skills";
 
 export function Site() {
@@ -33,6 +34,7 @@ export function Site() {
         <Contact email={profile.email} />
         <Footer name={siteProfile.displayName} />
       </main>
+      <SecretMascot />
       <BackToTop />
       <EasterEgg />
       <CommandPalette />
