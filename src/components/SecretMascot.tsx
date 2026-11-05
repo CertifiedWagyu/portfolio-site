@@ -1,9 +1,9 @@
-import stocking from "../assets/stocking-cut.png";
+import stocking from "../assets/stocking-cut.webp";
 import { OPEN_SECRET_EVENT } from "./EasterEgg";
 
 /**
- * Stocking, die-cut onto the page. Pinned bottom-right so she rides along
- * with the scroll; one click opens the classified payload.
+ * Stocking, cut clean from the page art. Pinned bottom-right so she rides
+ * along with the scroll; one click opens the classified payload.
  */
 export function SecretMascot() {
   const openSecret = () => {
@@ -28,8 +28,8 @@ export function SecretMascot() {
           <img
             src={stocking}
             alt=""
-            width={207}
-            height={512}
+            width={408}
+            height={1026}
             draggable={false}
             className="stocking-art block h-[112px] w-auto select-none sm:h-[160px]"
           />
