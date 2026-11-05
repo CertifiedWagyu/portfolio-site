@@ -339,22 +339,22 @@
 
 .stocking-btn:hover,
 .stocking-btn:focus-visible {
-  transform: translate(-1px, -3px);
+  transform: translate(-1px, -2px);
 }
 
 .stocking-btn:active {
-  transform: translate(2px, 1px);
+  transform: translate(1px, 1px);
 }
 
 .stocking-art {
   transform-origin: 50% 100%;
-  filter: drop-shadow(3px 3px 0 rgba(9, 9, 11, 0.9));
+  filter: drop-shadow(2px 2px 0 rgba(9, 9, 11, 0.85));
   animation: stocking-bob 5.2s ease-in-out infinite;
 }
 
 .stocking-btn:hover .stocking-art,
 .stocking-btn:focus-visible .stocking-art {
-  filter: drop-shadow(5px 7px 0 rgba(9, 9, 11, 0.9));
+  filter: drop-shadow(3px 4px 0 rgba(9, 9, 11, 0.9));
 }
 
 .stocking-bubble {

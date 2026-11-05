@@ -43,31 +43,58 @@
         position: fixed;
         inset: 0;
         z-index: 9999;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: clamp(18px, 4vw, 44px);
-        background: var(--boot-bg);
+        background: transparent;
         color: var(--boot-ink);
         font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
-        transition: transform 480ms cubic-bezier(0.76, 0, 0.24, 1);
-        will-change: transform;
+        overflow: hidden;
       }
       html.dark #boot {
         --boot-bg: #0a0a0a;
         --boot-ink: #fafafa;
         --boot-accent: #60a5fa;
       }
-      #boot.is-done {
-        transform: translateY(-101%);
+      .boot-inner {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: clamp(18px, 4vw, 44px);
       }
-      #boot::after {
+      .boot-inner::after {
         content: "";
         position: absolute;
         inset: clamp(10px, 2vw, 22px);
         border: 2px solid currentColor;
-        pointer-events: none;
         opacity: 0.16;
+        pointer-events: none;
+      }
+      .boot-inner::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -2px;
+        height: 2px;
+        background: var(--boot-accent);
+        animation: boot-scan 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes boot-scan {
+        0% {
+          transform: translateY(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
       }
       .boot-row {
         display: flex;
@@ -80,10 +107,28 @@
         text-transform: uppercase;
         opacity: 0.7;
       }
-      .boot-mid {
+      .boot-row i {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin-right: 8px;
+        background: var(--boot-accent);
+        animation: boot-blink 900ms steps(2, end) infinite;
+      }
+      @keyframes boot-blink {
+        0%,
+        49% {
+          opacity: 1;
+        }
+        50%,
+        100% {
+          opacity: 0.15;
+        }
+      }
+      .boot-core {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: clamp(6px, 1vw, 14px);
       }
       .boot-kicker {
         margin: 0;
@@ -93,34 +138,63 @@
         text-transform: uppercase;
         opacity: 0.7;
       }
-      .boot-name {
-        margin: 0;
+      .boot-count {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.06em;
         font-family: "Archivo", "Arial Black", Impact, system-ui, sans-serif;
         font-weight: 900;
-        font-size: clamp(42px, 12.5vw, 132px);
-        line-height: 0.86;
-        letter-spacing: -0.045em;
-        text-transform: uppercase;
+        font-size: clamp(64px, 17vw, 210px);
+        line-height: 0.78;
+        letter-spacing: -0.05em;
+        font-variant-numeric: tabular-nums;
       }
-      .boot-name span {
-        display: inline-block;
-        margin-top: 0.06em;
-        padding: 0 0.08em;
-        background: var(--boot-accent);
-        color: var(--boot-bg);
+      .boot-count em {
+        font-style: normal;
+        font-size: 0.2em;
+        letter-spacing: 0.1em;
+        padding-top: 0.35em;
+        opacity: 0.45;
+      }
+      .boot-glyphs {
+        margin: 0;
+        font-size: clamp(9px, 1.1vw, 12px);
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.55;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: clip;
+      }
+      .boot-foot {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
       }
       .boot-meter {
-        height: clamp(10px, 1.4vw, 16px);
+        position: relative;
+        height: clamp(10px, 1.3vw, 16px);
         border: 2px solid currentColor;
-        margin-bottom: 10px;
+        overflow: hidden;
       }
       .boot-meter i {
-        display: block;
-        height: 100%;
+        position: absolute;
+        inset: 0;
         background: var(--boot-accent);
-        transform: scaleX(0.02);
+        transform: scaleX(0.01);
         transform-origin: left center;
-        transition: transform 120ms steps(3, end);
+        transition: transform 140ms steps(4, end);
+      }
+      .boot-meter::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          90deg,
+          transparent 0 8px,
+          var(--boot-bg) 8px 10px
+        );
       }
       .boot-meta {
         display: flex;
@@ -131,9 +205,49 @@
         letter-spacing: 0.22em;
         text-transform: uppercase;
       }
-      .boot-meta b {
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
+      .boot-meta span:first-child {
+        color: var(--boot-accent);
+      }
+      .boot-bars {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        pointer-events: none;
+      }
+      .boot-bars i {
+        flex: 1;
+        background: var(--boot-bg);
+        transition: transform 430ms cubic-bezier(0.76, 0, 0.24, 1);
+      }
+      #boot.is-done .boot-inner {
+        opacity: 0;
+        transition: opacity 110ms linear;
+      }
+      #boot.is-done .boot-bars i {
+        transform: translateX(101%);
+      }
+      #boot.is-done .boot-bars i:nth-child(odd) {
+        transform: translateX(-101%);
+      }
+      #boot.is-done .boot-bars i:nth-child(1) {
+        transition-delay: 0ms;
+      }
+      #boot.is-done .boot-bars i:nth-child(2) {
+        transition-delay: 55ms;
+      }
+      #boot.is-done .boot-bars i:nth-child(3) {
+        transition-delay: 110ms;
+      }
+      #boot.is-done .boot-bars i:nth-child(4) {
+        transition-delay: 165ms;
+      }
+      #boot.is-done .boot-bars i:nth-child(5) {
+        transition-delay: 220ms;
+      }
+      #boot.is-done .boot-bars i:nth-child(6) {
+        transition-delay: 275ms;
       }
       @media (prefers-reduced-motion: reduce) {
         #boot {
@@ -145,20 +259,28 @@
   </head>
   <body>
     <div id="boot" aria-hidden="true">
-      <div class="boot-row">
-        <span>Portfolio / 2026</span>
-        <span>Davao City · PHT</span>
-      </div>
-      <div class="boot-mid">
-        <p class="boot-kicker">Subject / 001</p>
-        <p class="boot-name">Delmart<br /><span>B. Asensi</span></p>
-      </div>
-      <div>
-        <div class="boot-meter"><i id="boot-bar"></i></div>
-        <div class="boot-meta">
-          <span>Portrait.core-001</span>
-          <span><b id="boot-pct">000</b> %</span>
+      <div class="boot-inner">
+        <div class="boot-row">
+          <span><i></i>Index / 001</span>
+          <span>Davao City · PHT</span>
         </div>
+
+        <div class="boot-core">
+          <p class="boot-kicker">Live render · ASCII.scan</p>
+          <div class="boot-count"><span id="boot-pct">000</span><em>%</em></div>
+          <p class="boot-glyphs" id="boot-glyphs">Glyph 0x000000 · Signal 00.00</p>
+        </div>
+
+        <div class="boot-foot">
+          <div class="boot-meter"><i id="boot-bar"></i></div>
+          <div class="boot-meta">
+            <span id="boot-status">Calibrating portrait</span>
+            <span>Portrait.core-001</span>
+          </div>
+        </div>
+      </div>
+      <div class="boot-bars">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </div>
     <script>
@@ -167,6 +289,8 @@
         if (!el) return;
         var bar = document.getElementById("boot-bar");
         var pct = document.getElementById("boot-pct");
+        var status = document.getElementById("boot-status");
+        var glyphs = document.getElementById("boot-glyphs");
         var reduce = false;
         try {
           reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -178,11 +302,20 @@
         document.documentElement.classList.add("is-booting");
 
         var start = performance.now();
-        var MIN = 950;
-        var CAP = 3200;
+        var MIN = 1050;
+        var CAP = 3400;
         var loaded = false;
         var finished = false;
         var held = 0;
+        var lastGlyph = 0;
+
+        function hex(len) {
+          var s = "";
+          for (var i = 0; i < len; i++) {
+            s += "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16));
+          }
+          return s;
+        }
 
         window.addEventListener("load", function () {
           loaded = true;
@@ -193,11 +326,13 @@
           finished = true;
           bar.style.transform = "scaleX(1)";
           pct.textContent = "100";
+          status.textContent = "Signal locked";
+          glyphs.textContent = "Glyph 0xFFFFFF · Signal 100.00";
           document.documentElement.classList.remove("is-booting");
           el.classList.add("is-done");
           window.setTimeout(function () {
             el.remove();
-          }, 560);
+          }, 980);
         }
 
         function tick() {
@@ -209,7 +344,20 @@
           if (shown >= held) {
             held = shown;
             pct.textContent = ("00" + shown).slice(-3);
-            bar.style.transform = "scaleX(" + Math.max(0.02, target) + ")";
+            bar.style.transform = "scaleX(" + Math.max(0.01, target) + ")";
+            status.textContent =
+              shown < 35
+                ? "Calibrating portrait"
+                : shown < 70
+                  ? "Sampling glyphs"
+                  : shown < 97
+                    ? "Dithering 16m"
+                    : "Locking signal";
+            if (elapsed - lastGlyph > 90) {
+              lastGlyph = elapsed;
+              glyphs.textContent =
+                "Glyph 0x" + hex(6) + " · Signal " + (95 + Math.random() * 4.9).toFixed(2);
+            }
           }
           if ((loaded && elapsed >= MIN) || elapsed >= CAP) {
             finish();
