@@ -37,9 +37,10 @@
         overflow: hidden;
       }
       #boot {
-        --boot-bg: #fafafa;
+        --boot-bg: #f0ebe1;
         --boot-ink: #09090b;
         --boot-accent: #2563eb;
+        --boot-wash: rgba(9, 9, 11, 0.05);
         position: fixed;
         inset: 0;
         z-index: 9999;
@@ -49,9 +50,10 @@
         overflow: hidden;
       }
       html.dark #boot {
-        --boot-bg: #0a0a0a;
+        --boot-bg: #1a1815;
         --boot-ink: #fafafa;
         --boot-accent: #60a5fa;
+        --boot-wash: rgba(250, 250, 250, 0.07);
       }
       .boot-inner {
         position: absolute;
@@ -59,7 +61,7 @@
         z-index: 2;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        gap: clamp(12px, 2vw, 26px);
         padding: clamp(18px, 4vw, 44px);
       }
       .boot-inner::after {
@@ -69,32 +71,6 @@
         border: 2px solid currentColor;
         opacity: 0.16;
         pointer-events: none;
-      }
-      .boot-inner::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: -2px;
-        height: 2px;
-        background: var(--boot-accent);
-        animation: boot-scan 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-      @keyframes boot-scan {
-        0% {
-          transform: translateY(0);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
-        }
-        90% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(100vh);
-          opacity: 0;
-        }
       }
       .boot-row {
         display: flex;
@@ -125,47 +101,186 @@
           opacity: 0.15;
         }
       }
-      .boot-core {
+      .boot-canvas {
+        position: relative;
+        flex: 1;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: clamp(12px, 2.2vw, 30px);
+        padding: clamp(4px, 1vw, 12px) 0;
+        min-height: 0;
+      }
+      .wf {
+        border: 2px solid currentColor;
+      }
+      [data-draw] {
+        clip-path: inset(0 100% 0 0);
+      }
+      [data-draw].is-drawn {
+        clip-path: inset(0 0 0 0);
+        transition: clip-path var(--wf-dur, 300ms) cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      .wf-nav {
+        display: flex;
+        align-items: center;
+        gap: clamp(8px, 1.4vw, 22px);
+        height: clamp(30px, 4.4vw, 52px);
+        padding: 0 clamp(6px, 1vw, 14px);
+      }
+      .wf-nav span {
+        display: block;
+        height: 5px;
+        background: currentColor;
+        opacity: 0.75;
+      }
+      .wf-nav .brand {
+        width: 18%;
+        height: 12px;
+        opacity: 0.95;
+      }
+      .wf-nav span:nth-child(2) {
+        width: 6%;
+      }
+      .wf-nav span:nth-child(3) {
+        width: 8%;
+      }
+      .wf-nav span:nth-child(4) {
+        width: 6%;
+      }
+      .wf-nav span:nth-child(5) {
+        width: 7%;
+      }
+      .wf-nav .cta {
+        margin-left: auto;
+        width: 12%;
+        height: 100%;
+        background: var(--boot-accent);
+      }
+      .wf-body {
+        display: grid;
+        grid-template-columns: 1.12fr 0.88fr;
+        gap: clamp(12px, 2vw, 30px);
+        min-height: 0;
+      }
+      .wf-col {
         display: flex;
         flex-direction: column;
-        gap: clamp(6px, 1vw, 14px);
+        justify-content: space-between;
+        gap: clamp(10px, 1.7vw, 22px);
+        min-height: 0;
       }
-      .boot-kicker {
-        margin: 0;
-        font-size: clamp(9px, 1vw, 11px);
-        font-weight: 700;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        opacity: 0.7;
-      }
-      .boot-count {
+      .wf-h1 {
         display: flex;
-        align-items: flex-start;
-        gap: 0.06em;
-        font-family: "Archivo", "Arial Black", Impact, system-ui, sans-serif;
-        font-weight: 900;
-        font-size: clamp(64px, 17vw, 210px);
-        line-height: 0.78;
-        letter-spacing: -0.05em;
-        font-variant-numeric: tabular-nums;
+        flex-direction: column;
+        gap: clamp(6px, 1vw, 12px);
+        border: 0;
       }
-      .boot-count em {
-        font-style: normal;
-        font-size: 0.2em;
-        letter-spacing: 0.1em;
-        padding-top: 0.35em;
-        opacity: 0.45;
+      .wf-h1 .bar {
+        border: 2px solid currentColor;
+        height: clamp(26px, 4.8vw, 66px);
       }
-      .boot-glyphs {
-        margin: 0;
-        font-size: clamp(9px, 1.1vw, 12px);
-        font-weight: 500;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
+      .wf-h1 .bar.accent {
+        width: 78%;
+        height: clamp(22px, 4vw, 56px);
+        background: var(--boot-accent);
+        border-color: var(--boot-accent);
+      }
+      .wf-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        border: 0;
+      }
+      .wf-lines span {
+        display: block;
+        height: 3px;
+        background: currentColor;
+        opacity: 0.32;
+        width: 92%;
+      }
+      .wf-lines span:nth-child(2) {
+        width: 84%;
+      }
+      .wf-lines span:nth-child(3) {
+        width: 56%;
+      }
+      .wf-cta {
+        display: flex;
+        gap: 10px;
+        border: 0;
+      }
+      .wf-cta b {
+        display: block;
+        height: clamp(26px, 3.1vw, 44px);
+        width: 30%;
+        border: 2px solid currentColor;
+      }
+      .wf-cta b:first-child {
+        background: currentColor;
+      }
+      .wf-chips {
+        display: flex;
+        gap: 10px;
+        border: 0;
+      }
+      .wf-chips b {
+        display: block;
+        height: clamp(38px, 4.6vw, 66px);
+        width: 28%;
+        border: 2px solid currentColor;
+      }
+      .wf-chips b:last-child {
+        width: 22%;
+      }
+      .wf-strip {
+        display: flex;
+        gap: 10px;
+        margin-top: auto;
+        border: 0;
+      }
+      .wf-strip b {
+        display: block;
+        flex: 1;
+        height: clamp(18px, 2.4vw, 34px);
+        border: 2px solid currentColor;
+      }
+      .wf-strip b:first-child {
+        flex: 1.7;
+      }
+      .wf-strip b:last-child {
+        flex: 0.8;
+      }
+      .wf-panel {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 6px;
+        min-height: clamp(120px, 22vh, 260px);
+        padding: clamp(8px, 1.1vw, 14px);
+        background: var(--boot-wash);
+      }
+      .wf-panel b {
+        display: block;
+        width: 42%;
+        height: 4px;
+        background: currentColor;
         opacity: 0.55;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: clip;
+      }
+      .wf-panel span {
+        display: block;
+        height: 4px;
+        background: currentColor;
+        opacity: 0.28;
+        width: 88%;
+      }
+      .wf-panel span:nth-child(3n) {
+        width: 76%;
+      }
+      .wf-panel span:nth-child(3n + 1) {
+        width: 92%;
+      }
+      .wf-panel span:nth-child(4n) {
+        width: 64%;
       }
       .boot-foot {
         display: flex;
@@ -184,7 +299,7 @@
         background: var(--boot-accent);
         transform: scaleX(0.01);
         transform-origin: left center;
-        transition: transform 140ms steps(4, end);
+        transition: transform 200ms steps(4, end);
       }
       .boot-meter::after {
         content: "";
@@ -207,6 +322,57 @@
       }
       .boot-meta span:first-child {
         color: var(--boot-accent);
+      }
+      .boot-cursor {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 4;
+        width: 24px;
+        height: 24px;
+        opacity: 0;
+        transform: translate3d(-60px, -60px, 0);
+        transition:
+          transform 280ms cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 200ms linear;
+        pointer-events: none;
+        will-change: transform;
+      }
+      .boot-cursor svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+      .boot-cursor path {
+        fill: var(--boot-ink);
+        stroke: var(--boot-bg);
+        stroke-width: 1.6;
+        stroke-linejoin: round;
+      }
+      .boot-click {
+        position: absolute;
+        z-index: 5;
+        width: 56px;
+        height: 56px;
+        margin: -28px 0 0 -28px;
+        border: 2px solid var(--boot-accent);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .boot-click.is-on {
+        animation: boot-click 520ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      @keyframes boot-click {
+        0% {
+          opacity: 1;
+          transform: scale(0.2);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.9);
+        }
       }
       .boot-bars {
         position: absolute;
@@ -249,6 +415,28 @@
       #boot.is-done .boot-bars i:nth-child(6) {
         transition-delay: 275ms;
       }
+      @media (max-width: 640px) {
+        .wf-body {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr;
+          gap: 14px;
+        }
+        .wf-col {
+          justify-content: flex-start;
+          gap: 12px;
+        }
+        .wf-strip {
+          margin-top: 2px;
+        }
+        .wf-panel {
+          min-height: 0;
+          padding: 10px;
+        }
+        .wf-panel span,
+        .wf-panel b {
+          height: 3px;
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
         #boot {
           display: none;
@@ -265,20 +453,59 @@
           <span>Davao City · PHT</span>
         </div>
 
-        <div class="boot-core">
-          <p class="boot-kicker">Live render · ASCII.scan</p>
-          <div class="boot-count"><span id="boot-pct">000</span><em>%</em></div>
-          <p class="boot-glyphs" id="boot-glyphs">Glyph 0x000000 · Signal 00.00</p>
+        <div class="boot-canvas">
+          <div class="wf wf-nav" data-draw data-ms="190" data-label="Wireframing">
+            <span class="brand"></span>
+            <span></span><span></span><span></span><span></span>
+            <b class="cta"></b>
+          </div>
+
+          <div class="wf-body">
+            <div class="wf-col">
+              <div class="wf-h1" data-draw data-ms="260" data-label="Setting type">
+                <div class="bar"></div>
+                <div class="bar accent"></div>
+              </div>
+              <div class="wf-lines" data-draw data-ms="150" data-label="Ragging copy">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="wf-cta" data-draw data-ms="160" data-label="Placing buttons">
+                <b data-click></b><b></b>
+              </div>
+              <div class="wf-chips" data-draw data-ms="150" data-label="Adding counters">
+                <b></b><b></b>
+              </div>
+              <div class="wf-strip" data-draw data-ms="150" data-label="Laying out">
+                <b></b><b></b><b></b>
+              </div>
+            </div>
+
+            <div class="wf wf-panel" data-draw data-ms="280" data-label="Rendering portrait">
+              <b></b>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
         </div>
 
         <div class="boot-foot">
           <div class="boot-meter"><i id="boot-bar"></i></div>
           <div class="boot-meta">
-            <span id="boot-status">Calibrating portrait</span>
+            <span id="boot-status">Warming up</span>
             <span>Portrait.core-001</span>
           </div>
         </div>
       </div>
+
+      <div class="boot-cursor" id="boot-cursor">
+        <svg viewBox="0 0 20 22" aria-hidden="true">
+          <path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" />
+        </svg>
+      </div>
+      <div class="boot-click" id="boot-click"></div>
+
       <div class="boot-bars">
         <i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
@@ -287,10 +514,6 @@
       (function () {
         var el = document.getElementById("boot");
         if (!el) return;
-        var bar = document.getElementById("boot-bar");
-        var pct = document.getElementById("boot-pct");
-        var status = document.getElementById("boot-status");
-        var glyphs = document.getElementById("boot-glyphs");
         var reduce = false;
         try {
           reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -299,23 +522,20 @@
           el.remove();
           return;
         }
+
+        var cursor = document.getElementById("boot-cursor");
+        var clickRing = document.getElementById("boot-click");
+        var meter = document.getElementById("boot-bar");
+        var status = document.getElementById("boot-status");
+        var targets = [].slice.call(document.querySelectorAll("[data-draw]"));
+
         document.documentElement.classList.add("is-booting");
 
         var start = performance.now();
-        var MIN = 1050;
         var CAP = 3400;
         var loaded = false;
         var finished = false;
-        var held = 0;
-        var lastGlyph = 0;
-
-        function hex(len) {
-          var s = "";
-          for (var i = 0; i < len; i++) {
-            s += "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16));
-          }
-          return s;
-        }
+        var timer = 0;
 
         window.addEventListener("load", function () {
           loaded = true;
@@ -324,53 +544,101 @@
         function finish() {
           if (finished) return;
           finished = true;
-          bar.style.transform = "scaleX(1)";
-          pct.textContent = "100";
-          status.textContent = "Signal locked";
-          glyphs.textContent = "Glyph 0xFFFFFF · Signal 100.00";
+          window.clearTimeout(timer);
+          meter.style.transform = "scaleX(1)";
           document.documentElement.classList.remove("is-booting");
           el.classList.add("is-done");
           window.setTimeout(function () {
             el.remove();
-          }, 980);
+          }, 820);
         }
 
-        function tick() {
-          if (finished) return;
-          var elapsed = performance.now() - start;
-          var target = Math.min(1, elapsed / MIN);
-          if (!loaded) target = Math.min(target, 0.9);
-          var shown = Math.round((1 - Math.pow(1 - target, 2)) * 100);
-          if (shown >= held) {
-            held = shown;
-            pct.textContent = ("00" + shown).slice(-3);
-            bar.style.transform = "scaleX(" + Math.max(0.01, target) + ")";
-            status.textContent =
-              shown < 35
-                ? "Calibrating portrait"
-                : shown < 70
-                  ? "Sampling glyphs"
-                  : shown < 97
-                    ? "Dithering 16m"
-                    : "Locking signal";
-            if (elapsed - lastGlyph > 90) {
-              lastGlyph = elapsed;
-              glyphs.textContent =
-                "Glyph 0x" + hex(6) + " · Signal " + (95 + Math.random() * 4.9).toFixed(2);
-            }
-          }
-          if ((loaded && elapsed >= MIN) || elapsed >= CAP) {
+        function wait(ms) {
+          return new Promise(function (res) {
+            timer = window.setTimeout(res, ms);
+          });
+        }
+
+        function boxOf(node) {
+          var r = node.getBoundingClientRect();
+          return { x: r.left, y: r.top, right: r.right, bottom: r.bottom, w: r.width, h: r.height };
+        }
+
+        function run() {
+          var list = targets.filter(function (node) {
+            return boxOf(node).w > 2;
+          });
+          if (!list.length) {
             finish();
+            return Promise.resolve();
           }
+
+          // park the pointer at the first block's left edge, no travel yet
+          var first = boxOf(list[0]);
+          cursor.style.opacity = "1";
+          cursor.style.transitionDuration = "0ms";
+          cursor.style.transform = "translate3d(" + (first.x - 6) + "px," + (first.y - 5) + "px,0)";
+
+          var chain = wait(80);
+          list.forEach(function (node, i) {
+            chain = chain.then(function () {
+              var ms = Number(node.getAttribute("data-ms")) || 280;
+              var r = boxOf(node);
+              node.style.setProperty("--wf-dur", ms + "ms");
+              cursor.style.transitionDuration = ms + "ms";
+              cursor.style.transform =
+                "translate3d(" + (r.right - 8) + "px," + (r.y - 5) + "px,0)";
+              node.classList.add("is-drawn");
+              status.textContent = node.getAttribute("data-label") || "";
+              meter.style.transform = "scaleX(" + ((i + 1) / list.length).toFixed(3) + ")";
+              return wait(ms);
+            });
+          });
+
+          return chain
+            .then(function () {
+              var spot = document.querySelector("[data-click]");
+              var r = spot && boxOf(spot).w > 2 ? boxOf(spot) : boxOf(list[list.length - 1]);
+              var cx = r.x + r.w * 0.5 - 2;
+              var cy = r.y + r.h * 0.5 - 2;
+              cursor.style.transitionDuration = "200ms";
+              cursor.style.transform = "translate3d(" + cx + "px," + cy + "px,0)";
+              return wait(210).then(function () {
+                clickRing.style.left = cx + "px";
+                clickRing.style.top = cy + "px";
+                clickRing.classList.remove("is-on");
+                void clickRing.offsetWidth;
+                clickRing.classList.add("is-on");
+                cursor.style.transform = "translate3d(" + (cx + 1) + "px," + (cy + 2) + "px,0)";
+              });
+            })
+            .then(function () {
+              status.textContent = "Ready";
+              return wait(240);
+            })
+            .then(function () {
+              cursor.style.opacity = "0";
+              if (loaded || performance.now() - start > CAP) finish();
+              else maybeLater();
+            });
         }
 
-        var timer = window.setInterval(tick, 40);
-        tick();
-        window.addEventListener("load", tick);
+        function maybeLater() {
+          if (finished) return;
+          if (loaded) finish();
+          else if (performance.now() - start > CAP) finish();
+          else window.setTimeout(maybeLater, 90);
+        }
+
         window.setTimeout(function () {
-          window.clearInterval(timer);
+          if (!finished) finish();
+        }, CAP + 900);
+
+        try {
+          run().then(maybeLater, maybeLater);
+        } catch (e) {
           finish();
-        }, CAP + 800);
+        }
       })();
     </script>
     <div id="root"></div>
