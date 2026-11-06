@@ -35,19 +35,49 @@
     <style>
       html.is-booting {
         overflow: hidden;
+        scrollbar-gutter: stable;
       }
+
+      /* ---------- tokens: identical to the live site ---------- */
       #boot {
-        --boot-bg: #f0ebe1;
-        --boot-ink: #09090b;
-        --boot-accent: #2563eb;
-        --boot-dark: #07070c;
+        --paper: #fafafa;
+        --card: #ffffff;
+        --ink: #09090b;
+        --fawn: #3f3f46;
+        --latte: #71717a;
+        --accent: #2563eb;
+        --art: #07070c;
+        --hair: rgba(9, 9, 11, 0.15);
+        --hair-soft: rgba(9, 9, 11, 0.1);
+        --cur-nav: #2563eb;
+        --cur-frame: #e11d48;
+        --cur-type: #15803d;
+        --cur-cta: #b45309;
+        --cur-copy: #7c3aed;
+        --cur-art: #0891b2;
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background: transparent;
-        color: var(--boot-ink);
-        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
         overflow: hidden;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Space Grotesk", system-ui, sans-serif;
+      }
+      html.dark #boot {
+        --paper: #0a0a0a;
+        --card: #141416;
+        --ink: #fafafa;
+        --fawn: #a1a1aa;
+        --latte: #8b8b95;
+        --accent: #60a5fa;
+        --hair: rgba(250, 250, 250, 0.18);
+        --hair-soft: rgba(250, 250, 250, 0.1);
+        --cur-nav: #60a5fa;
+        --cur-frame: #fb7185;
+        --cur-type: #4ade80;
+        --cur-cta: #fbbf24;
+        --cur-copy: #a78bfa;
+        --cur-art: #22d3ee;
       }
       #boot,
       #boot *,
@@ -55,460 +85,636 @@
       #boot *::after {
         box-sizing: border-box;
       }
-      html.dark #boot {
-        --boot-bg: #1a1815;
-        --boot-ink: #fafafa;
-        --boot-accent: #60a5fa;
-        --boot-dark: #06060a;
+      .wf-page :where(p, h1, ul, li, dl, dd, dt) {
+        margin: 0;
+        padding: 0;
       }
-      .boot-shell {
+      .wf-page ul {
+        list-style: none;
+      }
+
+      .wf-page {
         position: absolute;
         inset: 0;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
       }
-      .boot-hud {
+
+      /* ---------- nav (h-14 / sm:h-16, max-w-1400, no side padding) ---------- */
+      .wf-nav {
+        position: absolute;
+        inset: 0 0 auto;
+        border-bottom: 2px solid var(--ink);
+        background: var(--paper);
+      }
+      .wf-nav-in {
+        display: flex;
+        align-items: stretch;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1400px;
+        height: 56px;
+        margin: 0 auto;
+      }
+      .wf-brand {
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+        align-items: center;
+        gap: 10px;
+        padding: 0 12px;
+        border-right: 2px solid var(--ink);
+      }
+      .wf-brand img {
+        display: block;
+        flex: 0 0 auto;
+        width: 28px;
+        height: 28px;
+        border: 2px solid var(--ink);
+        object-fit: cover;
+      }
+      .wf-brand b {
+        display: block;
+        flex: 0 0 auto;
+        width: 135px;
+        height: 11px;
+        background: var(--ink);
+      }
+      .wf-brand i {
+        display: none;
+        font-style: normal;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 9px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--latte);
+        white-space: nowrap;
+      }
+      .wf-links {
+        display: none;
+        align-items: stretch;
+      }
+      .wf-links li {
+        display: flex;
+        border-left: 2px solid var(--hair);
+      }
+      .wf-links li > span {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 10px clamp(16px, 4vw, 44px);
-        font-size: clamp(8px, 0.72vw, 10px);
+        gap: 8px;
+        padding: 0 14px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 10px;
         font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--fawn);
+        white-space: nowrap;
+      }
+      .wf-links li b {
+        font-weight: 400;
+        color: var(--latte);
+      }
+      .wf-tools {
+        display: flex;
+        align-items: stretch;
+        border-left: 2px solid var(--ink);
+      }
+      .wf-search {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        padding: 0 12px;
+        border: 0;
+        background: none;
+        color: var(--fawn);
+        font: 700 10px/1 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .wf-search svg {
+        width: 12px;
+        height: 12px;
+      }
+      .wf-search kbd {
+        padding: 1px 4px;
+        border: 1px solid var(--hair);
+        font: inherit;
+        font-size: 9px;
+        letter-spacing: 0;
+        text-transform: none;
+      }
+      .wf-theme {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        border-left: 2px solid var(--hair);
+        color: var(--fawn);
+      }
+      .wf-theme svg {
+        width: 16px;
+        height: 16px;
+      }
+      .wf-burger {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        border-left: 2px solid var(--ink);
+        color: var(--ink);
+      }
+      .wf-burger i {
+        display: block;
+        position: relative;
+        width: 20px;
+        height: 16px;
+      }
+      .wf-burger i::before,
+      .wf-burger i::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 20px;
+        height: 2px;
+        background: currentColor;
+      }
+      .wf-burger i::before {
+        top: 0;
+        box-shadow: 0 7px 0 currentColor;
+      }
+      .wf-burger i::after {
+        top: 14px;
+      }
+      .wf-hire {
+        display: none;
+        align-items: center;
+        padding: 0 20px;
+        background: var(--accent);
+        color: var(--paper);
+        font: 700 10px/1 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* ---------- hero shell (px-4 sm:px-6, pt-24 sm:pt-32) ---------- */
+      .wf-hero {
+        padding-top: 96px;
+      }
+      .wf-wrap {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+
+      /* ---------- status strip ---------- */
+      .wf-status {
+        display: grid;
+        grid-template-columns: 1fr;
+        border: 2px solid var(--ink);
+        background: var(--card);
+      }
+      .wf-status > span {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        font: 700 9px/1.5 "JetBrains Mono", ui-monospace, monospace;
         letter-spacing: 0.22em;
         text-transform: uppercase;
-        opacity: 0.6;
+        color: var(--fawn);
       }
-      .boot-hud i {
-        display: inline-block;
+      .wf-status > span + span {
+        border-top: 2px solid var(--hair-soft);
+      }
+      .wf-status .dot {
         width: 6px;
         height: 6px;
-        margin-right: 7px;
-        background: var(--boot-accent);
-        animation: boot-blink 900ms steps(2, end) infinite;
+        background: var(--accent);
+        flex: 0 0 auto;
       }
-      @keyframes boot-blink {
+      .wf-status .open {
+        background: var(--accent);
+        color: var(--paper);
+      }
+      .wf-status .tz {
+        color: var(--latte);
+      }
+
+      /* ---------- 7 / 5 grid ---------- */
+      .wf-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 40px;
+        margin-top: 32px;
+        align-items: start;
+      }
+      .wf-main {
+        min-width: 0;
+      }
+      .wf-side {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      /* ---------- type column ---------- */
+      .wf-kicker {
+        font: 700 10px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: var(--latte);
+      }
+      .wf-h1 {
+        margin-top: 16px;
+        font-family: "Archivo", "Space Grotesk", system-ui, sans-serif;
+        font-size: clamp(3rem, 9.2vw, 7.4rem);
+        font-weight: 900;
+        line-height: 0.8;
+        text-transform: uppercase;
+      }
+      .wf-h1 .l1 {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 0.127em;
+        row-gap: 0;
+      }
+      .wf-h1 .l1 b {
+        display: block;
+        flex: 0 0 auto;
+        height: 0.8em;
+        background: var(--ink);
+      }
+      .wf-h1 .l1 b:first-child {
+        width: 5.021em;
+      }
+      .wf-h1 .l1 b:last-child {
+        width: 1em;
+      }
+      .wf-h1 .l2 {
+        display: flex;
+        align-items: center;
+        width: calc(3.815em + 16px);
+        height: calc(0.8em + 4px);
+        margin-top: 4px;
+        padding: 0 8px;
+        background: var(--accent);
+      }
+      .wf-h1 .l2 i {
+        display: block;
+        width: 100%;
+        height: 80%;
+        background: var(--paper);
+      }
+      .wf-role {
+        display: flex;
+        align-items: center;
+        height: 24px;
+        margin-top: 20px;
+        font: 600 12px/1 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--fawn);
+        white-space: nowrap;
+      }
+      .wf-role em {
+        margin-right: 8px;
+        color: var(--accent);
+        font-style: normal;
+      }
+      .wf-role b {
+        display: block;
+        width: 118px;
+        height: 9px;
+        background: var(--fawn);
+        opacity: 0.55;
+      }
+      .wf-role i {
+        display: block;
+        width: 8px;
+        height: 16px;
+        margin-left: 4px;
+        background: var(--accent);
+        animation: wf-blink 900ms steps(2, end) infinite;
+      }
+      @keyframes wf-blink {
         0%,
         49% {
           opacity: 1;
         }
         50%,
         100% {
-          opacity: 0.15;
+          opacity: 0.12;
         }
       }
-
-      /* ---------- replica shell ---------- */
-      .boot-inner {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        gap: clamp(6px, 1vh, 12px);
-        padding: clamp(10px, 2.2vh, 24px) clamp(16px, 4vw, 44px) clamp(12px, 2.4vh, 26px);
-      }
-
-      [data-draw] {
-        clip-path: inset(0 100% 0 0);
-      }
-      [data-draw].is-drawn {
-        clip-path: inset(0 0 0 0);
-        transition: clip-path var(--wf-dur, 300ms) cubic-bezier(0.65, 0, 0.35, 1);
-      }
-
-      /* ---------- nav ---------- */
-      .wf-nav {
-        display: flex;
-        align-items: stretch;
-        height: clamp(34px, 6.6vh, 62px);
-        padding-left: clamp(14px, 2.2vw, 32px);
-        border-bottom: 2px solid currentColor;
-        font-size: clamp(6px, 0.6vw, 9px);
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-      .wf-nav .brand {
-        display: flex;
-        align-items: center;
-        gap: clamp(7px, 0.9vw, 13px);
-        padding-right: clamp(12px, 1.8vw, 26px);
-        border-right: 2px solid currentColor;
-        flex: 0 0 auto;
-      }
-      .wf-nav .mark {
-        display: block;
-        width: clamp(17px, 1.9vw, 26px);
-        height: clamp(17px, 1.9vw, 26px);
-        object-fit: cover;
-        flex: 0 0 auto;
-      }
-      .wf-nav .brand b {
-        display: block;
-        width: clamp(44px, 7vw, 104px);
-        height: clamp(7px, 0.95vw, 11px);
-        background: currentColor;
-        flex: 0 0 auto;
-      }
-      .wf-nav .brand i {
-        display: block;
-        width: clamp(24px, 3.2vw, 54px);
-        height: clamp(4px, 0.5vw, 6px);
-        background: currentColor;
-        opacity: 0.38;
-        flex: 0 0 auto;
-      }
-      .wf-nav .links {
-        display: flex;
-        align-items: stretch;
-        flex: 1 1 0;
-        min-width: 0;
-      }
-      .wf-nav .links span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex: 1 1 0;
-        min-width: 0;
-        padding: 0 clamp(6px, 1vw, 14px);
-        border-left: 2px solid currentColor;
-        white-space: nowrap;
-        overflow: hidden;
-        opacity: 0.82;
-      }
-      .wf-nav .tools {
-        display: flex;
-        align-items: center;
-        gap: clamp(6px, 0.9vw, 12px);
-        padding: 0 clamp(8px, 1.2vw, 16px);
-        border-left: 2px solid currentColor;
-        flex: 0 0 auto;
-      }
-      .wf-nav .search {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        height: clamp(18px, 3.2vh, 26px);
-        padding: 0 clamp(6px, 0.8vw, 10px);
-        border: 2px solid currentColor;
-        opacity: 0.55;
-      }
-      .wf-nav .search kbd {
-        font: inherit;
-        border: 1px solid;
-        padding: 0 3px;
-        line-height: 1.15;
-      }
-      .wf-nav .theme {
-        display: block;
-        width: clamp(16px, 2.9vh, 24px);
-        height: clamp(16px, 2.9vh, 24px);
-        border: 2px solid currentColor;
-        opacity: 0.55;
-        flex: 0 0 auto;
-      }
-      .wf-nav .hire {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        padding: 0 clamp(10px, 1.8vw, 26px);
-        background: var(--boot-accent);
-        color: var(--boot-bg);
-        font-size: clamp(6px, 0.6vw, 9px);
-        font-weight: 700;
-        letter-spacing: 0.16em;
-        white-space: nowrap;
-        flex: 0 0 auto;
-      }
-
-      /* ---------- status strip ---------- */
-      .wf-status {
+      .wf-bio {
         display: grid;
-        grid-template-columns: 1fr auto auto;
-        border: 2px solid currentColor;
-        font-size: clamp(6px, 0.72vw, 9px);
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-      }
-      .wf-status > span {
-        display: flex;
+        grid-auto-rows: 22.75px;
         align-items: center;
-        gap: 7px;
-        padding: clamp(3px, 0.9vh, 8px) clamp(6px, 1vw, 14px);
-        white-space: nowrap;
+        max-width: 576px;
+        margin-top: 20px;
       }
-      .wf-status > span + span {
-        border-left: 2px solid currentColor;
-      }
-      .wf-status .city i {
-        width: 5px;
-        height: 5px;
-        background: var(--boot-accent);
-      }
-      .wf-status .open {
-        background: var(--boot-accent);
-        border-left-color: var(--boot-accent);
-        color: var(--boot-bg);
-      }
-      .wf-status .tz {
-        opacity: 0.6;
-      }
-
-      /* ---------- body ---------- */
-      .wf-body {
-        display: grid;
-        grid-template-columns: 1.38fr 1fr;
-        gap: clamp(10px, 1.8vw, 28px);
-        flex: 1;
-        min-height: 0;
-      }
-      .wf-col {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: clamp(6px, 1.2vh, 14px);
-        min-height: 0;
-      }
-      .wf-kicker {
-        font-size: clamp(6px, 0.68vw, 9px);
-        font-weight: 700;
-        letter-spacing: 0.34em;
-        text-transform: uppercase;
-        opacity: 0.45;
-      }
-      .wf-h1 {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: clamp(4px, 0.8vh, 10px);
-      }
-      .wf-h1 .bar {
-        width: 88%;
-        height: clamp(28px, 5.6vw, 74px);
-        background: currentColor;
-        opacity: 0.92;
-      }
-      .wf-h1 .bar.accent {
-        width: 62%;
-        background: var(--boot-accent);
-        opacity: 1;
-        display: flex;
-        align-items: center;
-        padding-left: 3%;
-      }
-      .wf-h1 .bar.accent i {
+      .wf-bio span {
         display: block;
-        width: 74%;
-        height: 36%;
-        background: var(--boot-bg);
-      }
-      .wf-role {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: clamp(7px, 0.8vw, 10px);
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        opacity: 0.75;
-      }
-      .wf-role i {
-        display: block;
-        width: 6px;
-        height: clamp(10px, 1.6vw, 14px);
-        background: var(--boot-accent);
-        animation: boot-blink 1s steps(2, end) infinite;
-      }
-      .wf-lines {
-        display: flex;
-        flex-direction: column;
-        gap: clamp(4px, 0.7vh, 7px);
-      }
-      .wf-lines span {
-        display: block;
-        height: clamp(4px, 0.65vh, 6px);
-        background: currentColor;
+        height: 8px;
+        background: var(--fawn);
         opacity: 0.22;
+      }
+      .wf-bio span:nth-child(1) {
+        width: 100%;
+      }
+      .wf-bio span:nth-child(2) {
         width: 96%;
       }
-      .wf-lines span:nth-child(2) {
-        width: 88%;
+      .wf-bio span:nth-child(3) {
+        width: 98%;
       }
-      .wf-lines span:nth-child(3) {
-        width: 54%;
+      .wf-bio span:nth-child(4) {
+        width: 58%;
       }
       .wf-cta {
         display: flex;
-        gap: clamp(6px, 1vw, 12px);
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 32px;
       }
-      .wf-cta b {
-        display: flex;
+      .wf-btn {
+        display: inline-flex;
         align-items: center;
-        height: clamp(24px, 4.2vh, 40px);
-        width: 32%;
-        border: 2px solid currentColor;
+        gap: 12px;
+        border: 2px solid var(--ink);
+        padding: 12px 24px;
+        background: var(--card);
+        color: var(--ink);
+        font: 700 10px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        white-space: nowrap;
       }
-      .wf-cta b::after {
-        content: "";
-        display: block;
-        width: 48%;
-        height: 4px;
-        margin: 0 auto;
-        background: currentColor;
-        opacity: 0.65;
-      }
-      .wf-cta b.solid {
-        background: currentColor;
-      }
-      .wf-cta b.solid::after {
-        background: var(--boot-bg);
-        opacity: 1;
+      .wf-btn.solid {
+        background: var(--ink);
+        color: var(--paper);
       }
       .wf-counts {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        border: 2px solid currentColor;
-        max-width: 62%;
+        max-width: 512px;
+        margin-top: 40px;
+        border: 2px solid var(--ink);
       }
       .wf-counts > div {
-        padding: clamp(4px, 1vh, 10px) clamp(6px, 1vw, 12px);
-        display: flex;
-        flex-direction: column;
-        gap: clamp(3px, 0.6vh, 6px);
+        padding: 16px;
       }
       .wf-counts > div + div {
-        border-left: 2px solid currentColor;
+        border-left: 2px solid var(--ink);
       }
       .wf-counts b {
         display: block;
-        width: 26px;
-        height: clamp(9px, 1.6vw, 15px);
-        background: currentColor;
+        width: 34px;
+        height: 30px;
+        background: var(--ink);
       }
       .wf-counts span {
         display: block;
-        width: 74%;
-        height: 3px;
-        background: currentColor;
-        opacity: 0.35;
+        margin-top: 8px;
+        font: 400 9px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--latte);
       }
 
-      /* ---------- right column ---------- */
-      .wf-side {
-        display: flex;
-        flex-direction: column;
-        gap: clamp(6px, 1.1vh, 14px);
-        padding-top: clamp(12px, 3.4vh, 30px);
-        min-height: 0;
-      }
+      /* ---------- portrait panel ---------- */
       .wf-panel {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        min-height: 0;
-        border: 2px solid currentColor;
+        border: 2px solid var(--ink);
+        background: var(--card);
       }
       .wf-panel .p-head,
       .wf-panel .p-foot {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 8px;
-        padding: clamp(3px, 0.8vh, 7px) clamp(5px, 0.9vw, 11px);
-        font-size: clamp(6px, 0.66vw, 8px);
-        font-weight: 700;
-        letter-spacing: 0.16em;
+        gap: 12px;
+        padding: 8px 16px;
+        font: 700 9px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
         white-space: nowrap;
       }
       .wf-panel .p-head {
-        border-bottom: 2px solid currentColor;
+        border-bottom: 2px solid var(--ink);
       }
       .wf-panel .p-foot {
-        border-top: 2px solid currentColor;
-        opacity: 0.6;
+        border-top: 2px solid var(--ink);
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        color: var(--latte);
       }
-      .wf-panel .live,
-      .wf-panel .scan-tag {
+      .wf-panel .p-head .live,
+      .wf-panel .p-foot .scan {
         display: flex;
         align-items: center;
-        gap: 5px;
-        color: var(--boot-accent);
-        opacity: 1;
+        gap: 8px;
+        color: var(--accent);
       }
-      .wf-panel .live i,
-      .wf-panel .scan-tag i {
-        width: 4px;
-        height: 4px;
-        background: var(--boot-accent);
+      .wf-panel .p-head .live i,
+      .wf-panel .p-foot .scan i {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
       }
-      .wf-panel .p-art {
+      .wf-panel .p-head .live i {
+        animation: wf-blink 1.4s steps(2, end) infinite;
+      }
+      .wf-art {
         position: relative;
-        flex: 1;
-        min-height: 48px;
-        background: var(--boot-dark);
+        aspect-ratio: 1 / 1;
         overflow: hidden;
+        background: var(--art);
+        isolation: isolate;
       }
-      .wf-panel .p-art::before {
-        content: "";
+      .wf-art .ink {
         position: absolute;
         inset: 0;
-        background: repeating-linear-gradient(
-          to bottom,
-          rgba(255, 255, 255, 0.16) 0 1px,
-          transparent 1px 5px
-        );
-        opacity: 0.5;
+        background-image:
+          linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 12px 12px;
+        opacity: 0.7;
       }
-      .wf-panel .p-art::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background:
-          radial-gradient(58% 62% at 50% 42%, rgba(255, 255, 255, 0.14), transparent 70%),
-          radial-gradient(26% 34% at 52% 30%, rgba(255, 255, 255, 0.1), transparent 70%);
-      }
-      .wf-panel .p-art .dots {
+      .wf-art .dots {
         position: absolute;
         inset: 0;
         background-image: radial-gradient(circle at 1px 1px, rgba(244, 114, 182, 0.95) 1.15px, transparent 1.7px);
         background-size: 4px 4px;
         -webkit-mask-image:
-          radial-gradient(30% 34% at 50% 37%, #000 44%, transparent 78%),
-          radial-gradient(46% 32% at 50% 84%, #000 34%, transparent 76%);
+          radial-gradient(30% 34% at 50% 30%, #000 44%, transparent 78%),
+          radial-gradient(48% 34% at 50% 86%, #000 34%, transparent 76%);
         mask-image:
-          radial-gradient(30% 34% at 50% 37%, #000 44%, transparent 78%),
-          radial-gradient(46% 32% at 50% 84%, #000 34%, transparent 76%);
-        opacity: 0.85;
+          radial-gradient(30% 34% at 50% 30%, #000 44%, transparent 78%),
+          radial-gradient(48% 34% at 50% 86%, #000 34%, transparent 76%);
+        opacity: 0.8;
       }
-      .wf-panel .p-art .hud {
+      .wf-art .scanlines {
         position: absolute;
-        z-index: 2;
-        color: rgba(255, 255, 255, 0.45);
-        font-size: clamp(5px, 0.52vw, 7px);
-        font-weight: 700;
-        letter-spacing: 0.16em;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.05) 0 1px,
+          transparent 1px 3px
+        );
+        opacity: 0.6;
+      }
+      .wf-art .corner {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border-color: rgba(250, 250, 250, 0.4);
+        border-style: solid;
+        border-width: 0;
+      }
+      .wf-art .corner.tl {
+        left: 8px;
+        top: 8px;
+        border-left-width: 2px;
+        border-top-width: 2px;
+      }
+      .wf-art .corner.tr {
+        right: 8px;
+        top: 8px;
+        border-right-width: 2px;
+        border-top-width: 2px;
+      }
+      .wf-art .corner.bl {
+        left: 8px;
+        bottom: 8px;
+        border-left-width: 2px;
+        border-bottom-width: 2px;
+      }
+      .wf-art .corner.br {
+        right: 8px;
+        bottom: 8px;
+        border-right-width: 2px;
+        border-bottom-width: 2px;
+      }
+      .wf-art .hud {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        left: 16px;
+        right: 16px;
+        font: 400 8px/1.4 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.24em;
         text-transform: uppercase;
+        color: rgba(250, 250, 250, 0.45);
+      }
+      .wf-art .hud.top {
+        top: 12px;
+      }
+      .wf-art .hud.bottom {
+        bottom: 12px;
+      }
+      .wf-art .hud.bottom span:last-child {
+        color: rgba(250, 250, 250, 0.7);
+      }
+
+      /* ---------- telemetry ---------- */
+      .wf-tele {
+        border: 2px solid var(--ink);
+        background: var(--card);
+      }
+      .wf-tele .t-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 16px;
+        background: var(--ink);
+        color: var(--paper);
+        font: 700 9px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+      }
+      .wf-tele .t-head .on {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+      }
+      .wf-tele .t-head .on i {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+      }
+      .wf-tele .t-id {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+      }
+      .wf-tele .avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 56px;
+        height: 56px;
+        border: 2px solid var(--ink);
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Archivo", system-ui, sans-serif;
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .wf-tele .who {
+        min-width: 0;
+        flex: 1;
+      }
+      .wf-tele .who .name {
+        display: block;
+        width: 45%;
+        height: 12px;
+        background: var(--ink);
+      }
+      .wf-tele .who .tag {
+        display: block;
+        width: 60%;
+        height: 6px;
+        margin-top: 8px;
+        background: var(--fawn);
+        opacity: 0.3;
+      }
+      .wf-tele dl {
+        border-top: 2px solid var(--ink);
+      }
+      .wf-tele dl > div {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 16px;
+        border-bottom: 2px solid var(--hair-soft);
+      }
+      .wf-tele dl > div:last-child {
+        border-bottom: 0;
+      }
+      .wf-tele dt {
+        flex: 0 0 auto;
+        font: 400 9px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--latte);
+      }
+      .wf-tele dd {
+        overflow: hidden;
+        font-size: 12px;
+        line-height: 1.333;
+        font-weight: 600;
+        text-align: right;
+        text-overflow: ellipsis;
         white-space: nowrap;
-      }
-      .wf-panel .p-art .hud.tl {
-        left: 7px;
-        top: 6px;
-      }
-      .wf-panel .p-art .hud.tr {
-        right: 7px;
-        top: 6px;
-      }
-      .wf-panel .p-art .hud.bl {
-        left: 7px;
-        bottom: 6px;
-      }
-      .wf-panel .p-art .hud.br {
-        right: 7px;
-        bottom: 6px;
+        color: var(--ink);
       }
 
       /* ---------- scroll rail ---------- */
@@ -516,246 +722,262 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-top: 2px solid currentColor;
-        padding-top: clamp(4px, 1vh, 9px);
-        font-size: clamp(6px, 0.68vw, 9px);
-        font-weight: 700;
+        margin-top: 48px;
+        padding: 16px 0;
+        border-top: 2px solid var(--ink);
+        font: 700 10px/1.5 "JetBrains Mono", ui-monospace, monospace;
         letter-spacing: 0.28em;
         text-transform: uppercase;
-        opacity: 0.6;
+        color: var(--latte);
+      }
+      .wf-scroll span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
 
-      /* ---------- footer meter ---------- */
-      .boot-foot {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        padding-top: clamp(4px, 1vh, 10px);
-      }
-      .boot-meter {
-        position: relative;
-        height: clamp(8px, 1.5vh, 14px);
-        border: 2px solid currentColor;
+      /* ---------- ticker ---------- */
+      .wf-ticker {
+        margin-top: 0;
+        padding: 10px 0;
         overflow: hidden;
+        border-top: 2px solid var(--ink);
+        border-bottom: 2px solid var(--ink);
+        background: var(--ink);
+        color: var(--paper);
       }
-      .boot-meter i {
-        position: absolute;
-        inset: 0;
-        background: var(--boot-accent);
-        transform: scaleX(0.01);
-        transform-origin: left center;
-        transition: transform 180ms steps(4, end);
-      }
-      .boot-meter::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image: repeating-linear-gradient(
-          90deg,
-          transparent 0 8px,
-          var(--boot-bg) 8px 10px
-        );
-      }
-      .boot-meta {
+      .wf-ticker-track {
         display: flex;
-        justify-content: space-between;
-        gap: 16px;
-        font-size: clamp(7px, 0.72vw, 9px);
-        font-weight: 700;
-        letter-spacing: 0.2em;
+        width: max-content;
+        gap: 32px;
+        padding-right: 32px;
+        font: 700 10px/1.5 "JetBrains Mono", ui-monospace, monospace;
+        letter-spacing: 0.28em;
         text-transform: uppercase;
+        white-space: nowrap;
+        animation: wf-marquee 34s linear infinite;
       }
-      .boot-meta span:first-child {
-        color: var(--boot-accent);
+      .wf-ticker-track > span {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+      .wf-ticker-track em {
+        font-style: normal;
+        color: var(--accent);
+      }
+      @keyframes wf-marquee {
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ---------- progress ---------- */
+      .wf-progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 8;
+        height: 3px;
+        background: transparent;
+      }
+      .wf-progress i {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 260ms linear;
+      }
+
+      /* ---------- paint wipe ---------- */
+      [data-el] {
+        clip-path: inset(0 100% 0 0);
+      }
+      [data-el].is-drawn {
+        clip-path: inset(0 0 0 0);
+        transition: clip-path var(--wf-dur, 500ms) cubic-bezier(0.35, 0, 0.45, 1);
       }
 
       /* ---------- cursors ---------- */
-      .bcur {
+      .wf-cur {
         position: absolute;
         left: 0;
         top: 0;
-        z-index: 4;
-        width: 22px;
-        height: 22px;
+        z-index: 20;
+        width: 20px;
+        height: 20px;
         opacity: 0;
-        transform: translate3d(-80px, -80px, 0);
+        transform: translate3d(-90px, -90px, 0);
         transition:
-          transform 260ms cubic-bezier(0.4, 0, 0.2, 1),
-          opacity 160ms linear;
+          transform 260ms cubic-bezier(0.35, 0, 0.45, 1),
+          opacity 200ms linear;
         pointer-events: none;
         will-change: transform;
-        --c: var(--boot-accent);
+        --c: var(--cur-nav);
       }
-      .bcur[data-cursor="grid"] {
-        --c: #e11d48;
+      .wf-cur[data-cursor="frame"] {
+        --c: var(--cur-frame);
       }
-      .bcur[data-cursor="copy"] {
-        --c: #15803d;
+      .wf-cur[data-cursor="type"] {
+        --c: var(--cur-type);
       }
-      .bcur[data-cursor="art"] {
-        --c: #b45309;
+      .wf-cur[data-cursor="cta"] {
+        --c: var(--cur-cta);
       }
-      html.dark .bcur[data-cursor="grid"] {
-        --c: #fb7185;
+      .wf-cur[data-cursor="copy"] {
+        --c: var(--cur-copy);
       }
-      html.dark .bcur[data-cursor="copy"] {
-        --c: #4ade80;
+      .wf-cur[data-cursor="art"] {
+        --c: var(--cur-art);
       }
-      html.dark .bcur[data-cursor="art"] {
-        --c: #fbbf24;
-      }
-      .bcur svg {
+      .wf-cur svg {
         display: block;
         width: 100%;
         height: 100%;
         overflow: visible;
       }
-      .bcur svg path {
+      .wf-cur svg path {
         fill: var(--c);
-        stroke: var(--boot-bg);
-        stroke-width: 1.4;
+        stroke: var(--paper);
+        stroke-width: 1.3;
         stroke-linejoin: round;
       }
-      .bcur .tag {
+      .wf-cur .tag {
         position: absolute;
-        left: 17px;
-        top: 17px;
+        left: 15px;
+        top: 15px;
         padding: 2px 5px;
         background: var(--c);
-        color: var(--boot-bg);
-        font-size: clamp(6px, 0.6vw, 8px);
-        font-weight: 700;
+        color: var(--paper);
+        font: 700 7px/1.3 "JetBrains Mono", ui-monospace, monospace;
         letter-spacing: 0.16em;
         text-transform: uppercase;
         white-space: nowrap;
-        line-height: 1.3;
-        transition: opacity 180ms linear;
+        transition: opacity 220ms linear;
       }
-      .bcur.is-idle .tag {
-        opacity: 0;
-      }
-      .bcur.flip .tag {
+      .wf-cur.flip .tag {
         left: auto;
-        right: 17px;
+        right: 15px;
       }
-      .bcur .ring {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 46px;
-        height: 46px;
-        margin: -23px 0 0 -23px;
-        border: 2px solid var(--c);
-        box-shadow: 0 0 0 2px var(--boot-bg);
+      .wf-cur.is-idle .tag {
         opacity: 0;
-      }
-      .bcur.is-click .ring {
-        animation: bcur-click 520ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-      }
-      @keyframes bcur-click {
-        0% {
-          opacity: 1;
-          transform: scale(0.18);
-        }
-        100% {
-          opacity: 0;
-          transform: scale(1.8);
-        }
       }
 
       /* ---------- exit ---------- */
-      .boot-bars {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        pointer-events: none;
+      #boot {
+        transition: opacity 620ms ease;
       }
-      .boot-bars i {
-        flex: 1;
-        background: var(--boot-bg);
-        transition: transform 430ms cubic-bezier(0.76, 0, 0.24, 1);
-      }
-      #boot.is-done .boot-shell,
-      #boot.is-done .bcur {
+      #boot.is-done {
         opacity: 0;
-        transition: opacity 110ms linear;
-      }
-      #boot.is-done .boot-bars i {
-        transform: translateX(101%);
-      }
-      #boot.is-done .boot-bars i:nth-child(odd) {
-        transform: translateX(-101%);
-      }
-      #boot.is-done .boot-bars i:nth-child(1) {
-        transition-delay: 0ms;
-      }
-      #boot.is-done .boot-bars i:nth-child(2) {
-        transition-delay: 55ms;
-      }
-      #boot.is-done .boot-bars i:nth-child(3) {
-        transition-delay: 110ms;
-      }
-      #boot.is-done .boot-bars i:nth-child(4) {
-        transition-delay: 165ms;
-      }
-      #boot.is-done .boot-bars i:nth-child(5) {
-        transition-delay: 220ms;
-      }
-      #boot.is-done .boot-bars i:nth-child(6) {
-        transition-delay: 275ms;
       }
 
       /* ---------- responsive ---------- */
-      @media (max-width: 1080px) {
-        .wf-nav .links {
+      @media (min-width: 640px) {
+        .wf-nav-in {
+          height: 64px;
+        }
+        .wf-brand {
+          gap: 12px;
+          padding: 0 16px;
+        }
+        .wf-brand img {
+          width: 32px;
+          height: 32px;
+        }
+        .wf-brand b {
+          width: 145px;
+          height: 12px;
+        }
+        .wf-search {
+          display: flex;
+        }
+        .wf-theme {
+          width: 48px;
+        }
+        .wf-hero {
+          padding-top: 128px;
+        }
+        .wf-wrap {
+          padding: 0 24px;
+        }
+        .wf-status {
+          grid-template-columns: 1fr auto auto;
+        }
+        .wf-status > span + span {
+          border-top: 0;
+          border-left: 2px solid var(--hair-soft);
+        }
+        .wf-role {
+          font-size: 14px;
+        }
+        .wf-h1 .l2 {
+          width: calc(3.815em + 24px);
+          padding: 0 12px;
+        }
+        .wf-bio {
+          grid-auto-rows: 26px;
+        }
+        .wf-bio span {
+          height: 9px;
+        }
+        .wf-bio span:nth-child(4) {
           display: none;
         }
-        .wf-nav .brand {
-          border-right: 0;
+        .wf-counts > div {
+          padding: 20px;
         }
-        .wf-nav .tools {
-          margin-left: auto;
+        .wf-counts b {
+          width: 41px;
+          height: 36px;
+        }
+        .wf-tele .t-id {
+          padding: 20px;
         }
       }
-      @media (max-width: 640px) {
-        .wf-nav .links,
-        .wf-nav .tools {
-          display: none;
+      @media (min-width: 768px) {
+        .wf-hire {
+          display: flex;
         }
-        .wf-nav .hire {
-          margin-left: auto;
+      }
+      @media (min-width: 1024px) {
+        .wf-brand {
+          flex: 0 0 auto;
         }
-        .wf-nav .brand {
-          border-right: 0;
+        .wf-links {
+          display: flex;
         }
-        .wf-nav .brand i {
-          display: none;
+        .wf-grid {
+          grid-template-columns: repeat(12, minmax(0, 1fr));
+          gap: 48px;
+        }
+        .wf-main {
+          grid-column: span 7;
         }
         .wf-side {
-          padding-top: 0;
+          grid-column: span 5;
         }
-        .wf-body {
-          grid-template-columns: 1fr;
-          grid-template-rows: auto 1fr;
-        }
-        .wf-h1 .bar {
-          width: 94%;
-        }
-        .wf-status > span.tz {
+        .wf-burger {
           display: none;
         }
-        .wf-counts {
-          max-width: 100%;
+      }
+      @media (min-width: 1280px) {
+        .wf-brand i {
+          display: inline;
         }
-        .wf-scroll {
-          display: none;
+        .wf-links li > span {
+          padding: 0 16px;
         }
       }
       @media (prefers-reduced-motion: reduce) {
         #boot {
           display: none;
+        }
+        .wf-role i,
+        .wf-panel .p-head .live i,
+        .wf-ticker-track {
+          animation: none;
         }
       }
     </style>
@@ -763,117 +985,181 @@
   </head>
   <body>
     <div id="boot" aria-hidden="true">
-      <div class="boot-shell">
-        <div class="boot-hud">
-          <span><i></i>Index / 001</span>
-          <span>Davao City · PHT</span>
-        </div>
-
-        <div class="wf-nav" data-draw data-agent="grid" data-ms="200" data-label="Wiring the nav">
-          <span class="brand"><img class="mark" src="/favicon-48.png" alt="" width="48" height="48" /><b></b><i></i></span>
-          <span class="links">
-            <span>01 About</span><span>02 Skills</span><span>03 Certificates</span><span>04 Games</span><span>05 Education</span><span>06 Goals</span><span>07 Contact</span>
-          </span>
-          <span class="tools">
-            <span class="search"><em>Search</em><kbd>⌘K</kbd></span>
-            <span class="theme"></span>
-          </span>
-          <span class="hire" data-click="grid">Hire me</span>
-        </div>
-
-        <div class="boot-inner">
-          <div class="wf-status" data-draw data-agent="grid" data-ms="150" data-label="Dropping the status strip">
-            <span class="city"><i></i>Davao City, Philippines</span>
-            <span class="open">Open to internships</span>
-            <span class="tz">UTC+8 / PHT</span>
+      <div class="wf-page">
+        <header class="wf-nav" data-el data-agent="nav" data-ms="620">
+          <div class="wf-nav-in">
+            <span class="wf-brand">
+              <img src="/favicon-48.png" alt="" width="32" height="32" />
+              <b></b>
+              <i>/portfolio</i>
+            </span>
+            <ul class="wf-links">
+              <li><span><b>01</b> About</span></li>
+              <li><span><b>02</b> Skills</span></li>
+              <li><span><b>03</b> Certificates</span></li>
+              <li><span><b>04</b> Games</span></li>
+              <li><span><b>05</b> Education</span></li>
+              <li><span><b>06</b> Goals</span></li>
+              <li><span><b>07</b> Contact</span></li>
+            </ul>
+            <div class="wf-tools">
+              <span class="wf-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" />
+                </svg>
+                <span>Search</span>
+                <kbd>⌘K</kbd>
+              </span>
+              <span class="wf-theme">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4.5" />
+                  <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
+                </svg>
+              </span>
+              <span class="wf-hire">Hire me</span>
+              <span class="wf-burger"><i></i></span>
+            </div>
           </div>
+        </header>
 
-          <div class="wf-body">
-            <div class="wf-col">
-              <div class="wf-kicker" data-draw data-agent="type" data-ms="110" data-label="Kicker in place">
-                <span>Portfolio — 2026</span>
+        <div class="wf-hero">
+          <div class="wf-wrap">
+            <div class="wf-status" data-el data-agent="frame" data-ms="420">
+              <span><i class="dot"></i>Davao City, Philippines</span>
+              <span class="open">Open to internships</span>
+              <span class="tz">UTC+8 / PHT</span>
+            </div>
+
+            <div class="wf-grid">
+              <div class="wf-main">
+                <p class="wf-kicker" data-el data-agent="type" data-ms="300">Portfolio — 2026</p>
+
+                <h1 class="wf-h1" data-el data-agent="type" data-ms="760">
+                  <span class="l1"><b></b><b></b></span>
+                  <span class="l2"><i></i></span>
+                </h1>
+
+                <p class="wf-role" data-el data-agent="cta" data-ms="340">
+                  <em>&gt;</em><b></b><i></i>
+                </p>
+
+                <p class="wf-bio" data-el data-agent="copy" data-ms="440">
+                  <span></span><span></span><span></span><span></span>
+                </p>
+
+                <div class="wf-cta">
+                  <span class="wf-btn solid" data-el data-agent="cta" data-ms="300">Get in touch →</span>
+                  <span class="wf-btn" data-el data-agent="cta" data-ms="300">View my work</span>
+                </div>
+
+                <dl class="wf-counts" data-el data-agent="copy" data-ms="400">
+                  <div><b></b><span>Certificates</span></div>
+                  <div><b></b><span>Projects</span></div>
+                </dl>
               </div>
 
-              <div class="wf-h1" data-draw data-agent="type" data-ms="260" data-label="Setting the display type">
-                <div class="bar"></div>
-                <div class="bar accent" data-click="type"><i></i></div>
-              </div>
+              <div class="wf-side">
+                <div class="wf-panel" data-el data-agent="art" data-ms="820">
+                  <div class="p-head">
+                    <span>Subject / 001</span>
+                    <span class="live"><i></i>Live render</span>
+                  </div>
+                  <div class="wf-art">
+                    <div class="ink"></div>
+                    <div class="dots"></div>
+                    <div class="scanlines"></div>
+                    <span class="corner tl"></span>
+                    <span class="corner tr"></span>
+                    <span class="corner bl"></span>
+                    <span class="corner br"></span>
+                    <div class="hud top"><span>ASCII.scan</span><span>RGB / 16M</span></div>
+                    <div class="hud bottom"><span>live / 30fps</span><span>signal 98.2%</span></div>
+                  </div>
+                  <div class="p-foot">
+                    <span>portrait.core-001</span>
+                    <span class="scan">cursor: scan<i></i></span>
+                  </div>
+                </div>
 
-              <div class="wf-role" data-draw data-agent="type" data-ms="130" data-label="Typing the role">
-                <span>&gt; BSIT Student</span><i></i>
-              </div>
-
-              <div class="wf-lines" data-draw data-agent="copy" data-ms="150" data-label="Ragging the bio">
-                <span></span><span></span><span></span>
-              </div>
-
-              <div class="wf-cta" data-draw data-agent="copy" data-ms="150" data-label="Placing the buttons">
-                <b class="solid" data-click="copy"></b><b></b>
-              </div>
-
-              <div class="wf-counts" data-draw data-agent="copy" data-ms="140" data-label="Hooking the counters">
-                <div><b></b><span></span></div>
-                <div><b></b><span></span></div>
+                <div class="wf-tele" data-el data-agent="copy" data-ms="460">
+                  <div class="t-head">
+                    <span>Currently</span>
+                    <span class="on"><i></i>online</span>
+                  </div>
+                  <div class="t-id">
+                    <span class="avatar">DA</span>
+                    <span class="who">
+                      <span class="name"></span>
+                      <span class="tag"></span>
+                    </span>
+                  </div>
+                  <dl>
+                    <div><dt>Base</dt><dd>Davao City, Philippines</dd></div>
+                    <div><dt>School</dt><dd>Assumption College of Davao</dd></div>
+                    <div><dt>Local time</dt><dd id="wf-clock">05:52:18 PM</dd></div>
+                  </dl>
+                </div>
               </div>
             </div>
 
-            <div class="wf-side">
-              <div class="wf-panel" data-draw data-agent="art" data-ms="200" data-label="Framing the portrait">
-                <div class="p-head">
-                  <span>Subject / 001</span>
-                  <span class="live"><i></i>Live render</span>
-                </div>
-                <div class="p-art" data-draw data-agent="art" data-ms="280" data-label="Rendering the portrait" data-click="art">
-                  <i class="dots"></i>
-                  <span class="hud tl">Ascii.scan</span>
-                  <span class="hud tr">RGB / 16M</span>
-                  <span class="hud bl">Live / 30fps</span>
-                  <span class="hud br">Signal 98.2%</span>
-                </div>
-                <div class="p-foot">
-                  <span>Portrait.core-001</span>
-                  <span class="scan-tag">Cursor: scan<i></i></span>
-                </div>
-              </div>
+            <div class="wf-scroll" data-el data-agent="frame" data-ms="320">
+              <span><span aria-hidden="true">↓</span> Scroll</span>
+              <span>01 / About</span>
             </div>
           </div>
+        </div>
 
-          <div class="wf-scroll" data-draw data-agent="grid" data-ms="130" data-label="Closing the fold">
-            <span>↓ Scroll</span>
-            <span>01 / About</span>
-          </div>
-
-          <div class="boot-foot">
-            <div class="boot-meter"><i id="boot-bar"></i></div>
-            <div class="boot-meta">
-              <span id="boot-status">Warming up</span>
-              <span>4 cursors · Portrait.core-001</span>
-            </div>
+        <div class="wf-ticker" data-el data-agent="nav" data-ms="520">
+          <div class="wf-ticker-track">
+            <span>
+              <span><em>Available for internships</em> ✦</span>
+              <span>Web development ✦</span>
+              <span>Game design ✦</span>
+              <span><em>BS Information Technology</em> ✦</span>
+              <span>Davao City · PHT ✦</span>
+              <span><em>Open to collaboration</em> ✦</span>
+            </span>
+            <span>
+              <span><em>Available for internships</em> ✦</span>
+              <span>Web development ✦</span>
+              <span>Game design ✦</span>
+              <span><em>BS Information Technology</em> ✦</span>
+              <span>Davao City · PHT ✦</span>
+              <span><em>Open to collaboration</em> ✦</span>
+            </span>
           </div>
         </div>
       </div>
 
-      <div class="bcur" data-cursor="type">
-        <span class="tag">Type</span><span class="ring"></span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="bcur" data-cursor="grid">
-        <span class="tag">Grid</span><span class="ring"></span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="bcur" data-cursor="copy">
-        <span class="tag">Copy</span><span class="ring"></span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="bcur" data-cursor="art">
-        <span class="tag">Art</span><span class="ring"></span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
+      <div class="wf-progress"><i id="wf-bar"></i></div>
 
-      <div class="boot-bars">
-        <i></i><i></i><i></i><i></i><i></i><i></i>
+      <div class="wf-cur" data-cursor="nav">
+        <span class="tag">Nav</span>
+        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
+      </div>
+      <div class="wf-cur" data-cursor="frame">
+        <span class="tag">Frame</span>
+        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
+      </div>
+      <div class="wf-cur" data-cursor="type">
+        <span class="tag">Type</span>
+        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
+      </div>
+      <div class="wf-cur" data-cursor="cta">
+        <span class="tag">Cta</span>
+        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
+      </div>
+      <div class="wf-cur" data-cursor="copy">
+        <span class="tag">Copy</span>
+        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
+      </div>
+      <div class="wf-cur" data-cursor="art">
+        <span class="tag">Art</span>
+        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
       </div>
     </div>
+
     <script>
       (function () {
         var el = document.getElementById("boot");
@@ -887,45 +1173,41 @@
           return;
         }
 
-        var meter = document.getElementById("boot-bar");
-        var status = document.getElementById("boot-status");
-        var blocks = [].slice.call(document.querySelectorAll("[data-draw]"));
-        var names = ["type", "grid", "copy", "art"];
+        var bar = document.getElementById("wf-bar");
+        var units = [].slice.call(el.querySelectorAll("[data-el]"));
+        var starts = { nav: 40, frame: 260, type: 130, cta: 380, copy: 60, art: 200 };
         var agents = [];
-
-        document.documentElement.classList.add("is-booting");
-
-        var start = performance.now();
-        var CAP = 3400;
-        var loaded = false;
         var finished = false;
         var drawn = 0;
+        var total = 0;
+        var started = performance.now();
+        var clockTimer = 0;
 
-        window.addEventListener("load", function () {
-          loaded = true;
-        });
+        document.documentElement.classList.add("is-booting");
 
         function boxOf(node) {
           var r = node.getBoundingClientRect();
           return { x: r.left, y: r.top, right: r.right, bottom: r.bottom, w: r.width, h: r.height };
         }
 
-        names.forEach(function (name) {
-          var node = document.querySelector('[data-cursor="' + name + '"]');
+        var vh = window.innerHeight;
+
+        ["nav", "frame", "type", "cta", "copy", "art"].forEach(function (name) {
+          var node = el.querySelector('[data-cursor="' + name + '"]');
           if (!node) return;
-          agents.push({
-            name: name,
-            el: node,
-            timer: 0,
-            blocks: blocks.filter(function (b) {
-              return b.getAttribute("data-agent") === name && boxOf(b).w > 2;
-            }),
+          var blocks = units.filter(function (b) {
+            if (b.getAttribute("data-agent") !== name) return false;
+            var r = boxOf(b);
+            return r.w > 2 && r.y < vh - 4;
           });
+          agents.push({ name: name, el: node, timer: 0, blocks: blocks });
+          total += blocks.length;
         });
 
-        var total = agents.reduce(function (n, a) {
-          return n + a.blocks.length;
-        }, 0);
+        function setProgress() {
+          if (!total) return;
+          bar.style.transform = "scaleX(" + Math.max(0.01, drawn / total).toFixed(3) + ")";
+        }
 
         function finish() {
           if (finished) return;
@@ -934,12 +1216,13 @@
             window.clearTimeout(a.timer);
             a.el.style.opacity = "0";
           });
-          meter.style.transform = "scaleX(1)";
-          document.documentElement.classList.remove("is-booting");
+          bar.style.transform = "scaleX(1)";
+          window.clearInterval(clockTimer);
           el.classList.add("is-done");
           window.setTimeout(function () {
             el.remove();
-          }, 820);
+            document.documentElement.classList.remove("is-booting");
+          }, 700);
         }
 
         function wait(agent, ms) {
@@ -948,102 +1231,91 @@
           });
         }
 
+        ["wheel", "touchstart", "keydown"].forEach(function (evt) {
+          window.addEventListener(evt, finish, { once: true });
+        });
+
         function move(agent, x, y, ms) {
           agent.el.style.transitionDuration = ms + "ms";
           agent.el.style.transform = "translate3d(" + x + "px," + y + "px,0)";
-          agent.el.classList.toggle("flip", x > window.innerWidth - 150);
+          agent.el.classList.toggle("flip", x > window.innerWidth - 130);
         }
 
-        function runAgent(agent, delay) {
+        function runAgent(agent) {
           var list = agent.blocks;
-          agent.el.style.opacity = "1";
-
           if (!list.length) {
             agent.el.style.opacity = "0";
             return Promise.resolve();
           }
+          agent.el.style.opacity = "1";
 
-          var first = boxOf(list[0]);
-          move(agent, first.x - 5, first.y - 4, 0);
+          var chain = wait(agent, starts[agent.name] || 0);
+          var first = true;
 
-          var chain = wait(agent, delay);
           list.forEach(function (node) {
             chain = chain.then(function () {
               if (finished) return null;
-              var ms = Number(node.getAttribute("data-ms")) || 200;
+              var ms = Number(node.getAttribute("data-ms")) || 480;
               var r = boxOf(node);
-              move(agent, r.right - 7, r.y - 4, ms);
-              node.style.setProperty("--wf-dur", ms + "ms");
-              node.classList.add("is-drawn");
-              status.textContent = node.getAttribute("data-label") || "";
-              drawn += 1;
-              meter.style.transform = "scaleX(" + Math.max(0.02, drawn / total).toFixed(3) + ")";
-              return wait(agent, ms + 40);
+              var moveMs = first ? 150 : 260;
+              var settle = first ? 40 : 90;
+              first = false;
+              move(agent, r.x - 6, r.y - 9, moveMs);
+              return wait(agent, settle).then(function () {
+                if (finished) return;
+                node.style.setProperty("--wf-dur", ms + "ms");
+                node.classList.add("is-drawn");
+                move(agent, Math.min(r.right - 9, window.innerWidth - 28), r.y - 9, ms);
+                drawn += 1;
+                setProgress();
+                return wait(agent, ms + 200);
+              });
             });
           });
 
           return chain.then(function () {
-            if (finished) return null;
-            var spot =
-              document.querySelector('[data-click="' + agent.name + '"]') ||
-              list[list.length - 1];
-            var r = boxOf(spot);
-            var cx = r.x + r.w * 0.5 - 3;
-            var cy = r.y + r.h * 0.5 - 3;
-            move(agent, cx, cy, 190);
-            return wait(agent, 200).then(function () {
-              if (finished) return;
-              agent.el.classList.remove("is-click");
-              void agent.el.offsetWidth;
-              agent.el.classList.add("is-click");
-              move(agent, cx + 1, cy + 2, 120);
-              return wait(agent, 220).then(function () {
-                if (finished) return;
-                // settle inside the element's bottom-right corner so nothing is covered
-                move(
-                  agent,
-                  Math.min(r.right - 9, window.innerWidth - 30),
-                  Math.min(r.bottom - 9, window.innerHeight - 34),
-                  190
-                );
-                return wait(agent, 200).then(function () {
-                  agent.el.classList.add("is-idle");
-                });
-              });
-            });
+            if (!finished) agent.el.classList.add("is-idle");
           });
         }
 
-        // spread the four cursors across the page like a team working in parallel
-        Promise.all([
-          runAgent(agents[0], 90),
-          runAgent(agents[1], 0),
-          runAgent(agents[2], 160),
-          runAgent(agents[3], 60),
-        ])
+        Promise.all(agents.map(runAgent))
           .then(function () {
             if (finished) return;
-            status.textContent = "Ready to publish";
             return new Promise(function (res) {
-              window.setTimeout(res, 480);
+              window.setTimeout(res, 560);
             }).then(function () {
               if (finished) return;
-              if (loaded || performance.now() - start > CAP) finish();
-              else maybeLater();
+              if (document.readyState === "complete") finish();
+              else window.addEventListener("load", finish, { once: true });
             });
           })
           .catch(finish);
 
-        function maybeLater() {
-          if (finished) return;
-          if (loaded) finish();
-          else if (performance.now() - start > CAP) finish();
-          else window.setTimeout(maybeLater, 90);
-        }
-
         window.setTimeout(function () {
           if (!finished) finish();
-        }, CAP + 900);
+        }, 12000);
+
+        // live Manila clock, same as the telemetry panel
+        var clock = document.getElementById("wf-clock");
+        function tick() {
+          if (!clock) return;
+          try {
+            var parts = new Intl.DateTimeFormat("en-US", {
+              timeZone: "Asia/Manila",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: true,
+            }).formatToParts(new Date());
+            var map = {};
+            parts.forEach(function (p) {
+              map[p.type] = p.value;
+            });
+            clock.textContent = map.hour + ":" + map.minute + ":" + map.second + " " + map.dayPeriod;
+          } catch (e) {}
+        }
+        tick();
+        clockTimer = window.setInterval(tick, 1000);
       })();
     </script>
     <div id="root"></div>
