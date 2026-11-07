@@ -788,16 +788,12 @@
         background: var(--accent);
         transform: scaleX(0);
         transform-origin: left center;
-        transition: transform 260ms linear;
       }
 
-      /* ---------- paint wipe ---------- */
+      /* ---------- pieces start pulled aside ---------- */
       [data-el] {
-        clip-path: inset(0 100% 0 0);
-      }
-      [data-el].is-drawn {
-        clip-path: inset(0 0 0 0);
-        transition: clip-path var(--wf-dur, 500ms) cubic-bezier(0.35, 0, 0.45, 1);
+        opacity: 0;
+        transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0);
       }
 
       /* ---------- cursors ---------- */
@@ -809,27 +805,24 @@
         width: 20px;
         height: 20px;
         opacity: 0;
-        transform: translate3d(-90px, -90px, 0);
-        transition:
-          transform 260ms cubic-bezier(0.35, 0, 0.45, 1),
-          opacity 200ms linear;
+        transform: translate3d(var(--ex, -90px), var(--ey, -90px), 0);
         pointer-events: none;
-        will-change: transform;
+        will-change: transform, opacity;
         --c: var(--cur-nav);
       }
-      .wf-cur[data-cursor="frame"] {
+      .wf-cur[data-agent="frame"] {
         --c: var(--cur-frame);
       }
-      .wf-cur[data-cursor="type"] {
+      .wf-cur[data-agent="type"] {
         --c: var(--cur-type);
       }
-      .wf-cur[data-cursor="cta"] {
+      .wf-cur[data-agent="cta"] {
         --c: var(--cur-cta);
       }
-      .wf-cur[data-cursor="copy"] {
+      .wf-cur[data-agent="copy"] {
         --c: var(--cur-copy);
       }
-      .wf-cur[data-cursor="art"] {
+      .wf-cur[data-agent="art"] {
         --c: var(--cur-art);
       }
       .wf-cur svg {
@@ -865,9 +858,83 @@
         opacity: 0;
       }
 
+      /* ---------- drag + place ---------- */
+      @keyframes wf-piece-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes wf-piece-drag {
+        from {
+          transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0);
+        }
+        to {
+          transform: translate3d(0, 0, 0);
+        }
+      }
+      @keyframes wf-cur-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes wf-cur-grab {
+        from {
+          transform: translate3d(var(--ex, 0px), var(--ey, 0px), 0);
+        }
+        to {
+          transform: translate3d(var(--sx, 0px), var(--sy, 0px), 0);
+        }
+      }
+      @keyframes wf-cur-drag {
+        from {
+          transform: translate3d(var(--sx, 0px), var(--sy, 0px), 0);
+        }
+        to {
+          transform: translate3d(var(--hx, 0px), var(--hy, 0px), 0);
+        }
+      }
+      @keyframes wf-cur-nudge {
+        from {
+          transform: translate3d(var(--hx, 0px), var(--hy, 0px), 0);
+        }
+        to {
+          transform: translate3d(var(--nx, 0px), var(--ny, 0px), 0);
+        }
+      }
+      @keyframes wf-cur-out {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+      @keyframes wf-tag-out {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+      @keyframes wf-progress {
+        from {
+          transform: scaleX(0);
+        }
+        to {
+          transform: scaleX(1);
+        }
+      }
+
       /* ---------- exit ---------- */
       #boot {
-        transition: opacity 620ms ease;
+        transition: opacity 380ms ease;
       }
       #boot.is-done {
         opacity: 0;
@@ -986,7 +1053,7 @@
   <body>
     <div id="boot" aria-hidden="true">
       <div class="wf-page">
-        <header class="wf-nav" data-el data-agent="nav" data-ms="620">
+        <header class="wf-nav" data-el data-agent="nav" data-ms="620" data-label="Nav">
           <div class="wf-nav-in">
             <span class="wf-brand">
               <img src="/favicon-48.png" alt="" width="32" height="32" />
@@ -1025,7 +1092,7 @@
 
         <div class="wf-hero">
           <div class="wf-wrap">
-            <div class="wf-status" data-el data-agent="frame" data-ms="420">
+            <div class="wf-status" data-el data-agent="frame" data-ms="420" data-label="Status">
               <span><i class="dot"></i>Davao City, Philippines</span>
               <span class="open">Open to internships</span>
               <span class="tz">UTC+8 / PHT</span>
@@ -1033,34 +1100,34 @@
 
             <div class="wf-grid">
               <div class="wf-main">
-                <p class="wf-kicker" data-el data-agent="type" data-ms="300">Portfolio — 2026</p>
+                <p class="wf-kicker" data-el data-agent="type" data-ms="300" data-label="Kicker">Portfolio — 2026</p>
 
-                <h1 class="wf-h1" data-el data-agent="type" data-ms="760">
+                <h1 class="wf-h1" data-el data-agent="type" data-ms="760" data-label="Headline">
                   <span class="l1"><b></b><b></b></span>
                   <span class="l2"><i></i></span>
                 </h1>
 
-                <p class="wf-role" data-el data-agent="cta" data-ms="340">
+                <p class="wf-role" data-el data-agent="cta" data-ms="340" data-label="Role">
                   <em>&gt;</em><b></b><i></i>
                 </p>
 
-                <p class="wf-bio" data-el data-agent="copy" data-ms="440">
+                <p class="wf-bio" data-el data-agent="copy" data-ms="440" data-label="Bio">
                   <span></span><span></span><span></span><span></span>
                 </p>
 
                 <div class="wf-cta">
-                  <span class="wf-btn solid" data-el data-agent="cta" data-ms="300">Get in touch →</span>
-                  <span class="wf-btn" data-el data-agent="cta" data-ms="300">View my work</span>
+                  <span class="wf-btn solid" data-el data-agent="cta" data-ms="300" data-label="Primary">Get in touch →</span>
+                  <span class="wf-btn" data-el data-agent="cta" data-ms="300" data-label="Secondary">View my work</span>
                 </div>
 
-                <dl class="wf-counts" data-el data-agent="copy" data-ms="400">
+                <dl class="wf-counts" data-el data-agent="copy" data-ms="400" data-label="Counts">
                   <div><b></b><span>Certificates</span></div>
                   <div><b></b><span>Projects</span></div>
                 </dl>
               </div>
 
               <div class="wf-side">
-                <div class="wf-panel" data-el data-agent="art" data-ms="820">
+                <div class="wf-panel" data-el data-agent="art" data-ms="820" data-label="Portrait">
                   <div class="p-head">
                     <span>Subject / 001</span>
                     <span class="live"><i></i>Live render</span>
@@ -1082,7 +1149,7 @@
                   </div>
                 </div>
 
-                <div class="wf-tele" data-el data-agent="copy" data-ms="460">
+                <div class="wf-tele" data-el data-agent="copy" data-ms="460" data-label="Telemetry">
                   <div class="t-head">
                     <span>Currently</span>
                     <span class="on"><i></i>online</span>
@@ -1103,14 +1170,14 @@
               </div>
             </div>
 
-            <div class="wf-scroll" data-el data-agent="frame" data-ms="320">
+            <div class="wf-scroll" data-el data-agent="frame" data-ms="320" data-label="Scroll">
               <span><span aria-hidden="true">↓</span> Scroll</span>
               <span>01 / About</span>
             </div>
           </div>
         </div>
 
-        <div class="wf-ticker" data-el data-agent="nav" data-ms="520">
+        <div class="wf-ticker" data-el data-agent="nav" data-ms="520" data-label="Ticker">
           <div class="wf-ticker-track">
             <span>
               <span><em>Available for internships</em> ✦</span>
@@ -1133,31 +1200,6 @@
       </div>
 
       <div class="wf-progress"><i id="wf-bar"></i></div>
-
-      <div class="wf-cur" data-cursor="nav">
-        <span class="tag">Nav</span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="wf-cur" data-cursor="frame">
-        <span class="tag">Frame</span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="wf-cur" data-cursor="type">
-        <span class="tag">Type</span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="wf-cur" data-cursor="cta">
-        <span class="tag">Cta</span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="wf-cur" data-cursor="copy">
-        <span class="tag">Copy</span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
-      <div class="wf-cur" data-cursor="art">
-        <span class="tag">Art</span>
-        <svg viewBox="0 0 20 22" aria-hidden="true"><path d="M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z" /></svg>
-      </div>
     </div>
 
     <script>
@@ -1174,122 +1216,178 @@
         }
 
         var bar = document.getElementById("wf-bar");
-        var units = [].slice.call(el.querySelectorAll("[data-el]"));
-        var starts = { nav: 40, frame: 260, type: 130, cta: 380, copy: 60, art: 200 };
-        var agents = [];
+        var nodes = [].slice.call(el.querySelectorAll("[data-el]"));
+        var units = [];
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        var lastEnd = 0;
+        var lastPlace = 0;
         var finished = false;
-        var drawn = 0;
-        var total = 0;
-        var started = performance.now();
+        var timers = [];
         var clockTimer = 0;
+        var EASE = "cubic-bezier(0.18, 0.72, 0.22, 1)";
+        var CURSOR_PATH = "M2 1.5 L2 19.5 L6.9 14.9 L10.1 21.4 L13.6 19.8 L10.4 13.3 L17 12.9 Z";
 
         document.documentElement.classList.add("is-booting");
 
-        function boxOf(node) {
-          var r = node.getBoundingClientRect();
-          return { x: r.left, y: r.top, right: r.right, bottom: r.bottom, w: r.width, h: r.height };
+        function later(fn, ms) {
+          var id = window.setTimeout(function () {
+            if (!finished) fn();
+          }, ms);
+          timers.push(id);
+          return id;
         }
 
-        var vh = window.innerHeight;
+        function addCursor(label, agent) {
+          var cursor = document.createElement("div");
+          cursor.className = "wf-cur";
+          cursor.setAttribute("data-agent", agent);
+          cursor.setAttribute("aria-hidden", "true");
+          cursor.innerHTML =
+            '<span class="tag">' + label + '</span><svg viewBox="0 0 20 22" aria-hidden="true"><path d="' + CURSOR_PATH + '" /></svg>';
+          el.appendChild(cursor);
+          return cursor;
+        }
 
-        ["nav", "frame", "type", "cta", "copy", "art"].forEach(function (name) {
-          var node = el.querySelector('[data-cursor="' + name + '"]');
-          if (!node) return;
-          var blocks = units.filter(function (b) {
-            if (b.getAttribute("data-agent") !== name) return false;
-            var r = boxOf(b);
-            return r.w > 2 && r.y < vh - 4;
+        nodes.forEach(function (node, index) {
+          var r = node.getBoundingClientRect();
+          if (r.width < 3 || r.height < 3) return;
+
+          if (r.top >= vh - 4 || r.bottom <= 0) {
+            node.style.opacity = "1";
+            node.style.transform = "none";
+            return;
+          }
+
+          var agent = node.getAttribute("data-agent") || "copy";
+          var label = node.getAttribute("data-label") || agent;
+          var dx;
+          var dy;
+          if (r.width > vw * 0.72) {
+            dx = 0;
+            dy = r.top < vh * 0.5 ? -30 : 26;
+          } else {
+            dx = r.left + r.width / 2 > vw * 0.55 ? 46 : -34;
+            dy = 24 + (index % 4) * 8;
+            if (r.width > 500 && r.height > 90) {
+              dx *= 1.15;
+              dy += 6;
+            }
+          }
+
+          var grabX = Math.min(r.width - 12, Math.max(16, r.width * (r.width > 340 ? 0.28 : 0.42)));
+          var grabY = Math.min(r.height - 8, Math.max(14, r.height * (r.height > 84 ? 0.42 : 0.62)));
+          var holdX = r.left + grabX;
+          var holdY = r.top + grabY;
+          var delay = 100 + index * 46 + ((index * 17) % 29);
+          var drag = Math.max(190, Math.min(340, Math.round((Number(node.getAttribute("data-ms")) || 480) * 0.42)));
+          var grabAt = delay + 104;
+          var placeAt = grabAt + drag + 20;
+          var outAt = placeAt + 80;
+          var cursor = addCursor(label, agent);
+
+          cursor.classList.toggle("flip", holdX > vw - 150);
+          cursor.style.setProperty("--ex", holdX + dx * 0.55 + "px");
+          cursor.style.setProperty("--ey", holdY + dy * 0.55 + "px");
+          cursor.style.setProperty("--sx", holdX + dx + "px");
+          cursor.style.setProperty("--sy", holdY + dy + "px");
+          cursor.style.setProperty("--hx", holdX + "px");
+          cursor.style.setProperty("--hy", holdY + "px");
+          cursor.style.setProperty("--nx", holdX + dx * 0.12 + "px");
+          cursor.style.setProperty("--ny", holdY + dy * 0.12 + "px");
+          cursor.style.animationName = "wf-cur-in,wf-cur-grab,wf-cur-drag,wf-cur-nudge,wf-cur-out";
+          cursor.style.animationDuration = "70ms,100ms," + drag + "ms,110ms,160ms";
+          cursor.style.animationDelay = delay + "ms," + delay + "ms," + grabAt + "ms," + placeAt + "ms," + outAt + "ms";
+          cursor.style.animationTimingFunction =
+            "linear,cubic-bezier(0.3,0,0.4,1)," + EASE + ",cubic-bezier(0.3,0,0.3,1),linear";
+          cursor.style.animationFillMode = "forwards,forwards,forwards,forwards,forwards";
+
+          var tag = cursor.querySelector(".tag");
+          if (tag) {
+            tag.style.animation = "wf-tag-out 130ms linear " + (placeAt + 40) + "ms forwards";
+          }
+
+          cursor.addEventListener("animationend", function (ev) {
+            if (ev.animationName === "wf-cur-nudge") cursor.classList.add("is-idle");
           });
-          agents.push({ name: name, el: node, timer: 0, blocks: blocks });
-          total += blocks.length;
+
+          node.style.setProperty("--dx", dx + "px");
+          node.style.setProperty("--dy", dy + "px");
+          node.style.animationName = "wf-piece-in,wf-piece-drag";
+          node.style.animationDuration = "110ms," + drag + "ms";
+          node.style.animationDelay = delay + 58 + "ms," + grabAt + "ms";
+          node.style.animationTimingFunction = "linear," + EASE;
+          node.style.animationFillMode = "forwards,forwards";
+          node.style.willChange = "transform, opacity";
+
+          node.addEventListener("animationend", function (ev) {
+            if (ev.animationName === "wf-piece-drag") node.classList.add("is-placed");
+          });
+
+          units.push({
+            node: node,
+            cursor: cursor,
+            drag: drag,
+            placeAt: placeAt,
+            end: outAt + 160,
+          });
+
+          lastEnd = Math.max(lastEnd, outAt + 160);
+          lastPlace = Math.max(lastPlace, placeAt);
         });
 
-        function setProgress() {
-          if (!total) return;
-          bar.style.transform = "scaleX(" + Math.max(0.01, drawn / total).toFixed(3) + ")";
+        if (bar) {
+          bar.style.animation = "wf-progress " + Math.max(280, lastPlace) + "ms linear forwards";
         }
+
+        if (!units.length) {
+          finish();
+          return;
+        }
+
+        later(function () {
+          if (!finished) finish();
+        }, lastEnd + 260);
 
         function finish() {
           if (finished) return;
           finished = true;
-          agents.forEach(function (a) {
-            window.clearTimeout(a.timer);
-            a.el.style.opacity = "0";
+          timers.forEach(function (id) {
+            window.clearTimeout(id);
           });
-          bar.style.transform = "scaleX(1)";
+          timers = [];
+          units.forEach(function (u) {
+            u.node.style.animation = "none";
+            u.node.style.transition = "none";
+            u.node.style.opacity = "1";
+            u.node.style.transform = "none";
+            u.node.style.willChange = "auto";
+            u.node.classList.add("is-placed");
+            u.cursor.style.animation = "none";
+            u.cursor.style.transition = "none";
+            u.cursor.style.opacity = "0";
+            u.cursor.classList.add("is-idle");
+            var tag = u.cursor.querySelector(".tag");
+            if (tag) {
+              tag.style.animation = "none";
+              tag.style.opacity = "0";
+            }
+          });
+          if (bar) {
+            bar.style.animation = "none";
+            bar.style.transform = "scaleX(1)";
+          }
           window.clearInterval(clockTimer);
           el.classList.add("is-done");
           window.setTimeout(function () {
             el.remove();
             document.documentElement.classList.remove("is-booting");
-          }, 700);
-        }
-
-        function wait(agent, ms) {
-          return new Promise(function (res) {
-            agent.timer = window.setTimeout(res, ms);
-          });
+          }, 440);
         }
 
         ["wheel", "touchstart", "keydown"].forEach(function (evt) {
           window.addEventListener(evt, finish, { once: true });
         });
-
-        function move(agent, x, y, ms) {
-          agent.el.style.transitionDuration = ms + "ms";
-          agent.el.style.transform = "translate3d(" + x + "px," + y + "px,0)";
-          agent.el.classList.toggle("flip", x > window.innerWidth - 130);
-        }
-
-        function runAgent(agent) {
-          var list = agent.blocks;
-          if (!list.length) {
-            agent.el.style.opacity = "0";
-            return Promise.resolve();
-          }
-          agent.el.style.opacity = "1";
-
-          var chain = wait(agent, starts[agent.name] || 0);
-          var first = true;
-
-          list.forEach(function (node) {
-            chain = chain.then(function () {
-              if (finished) return null;
-              var ms = Number(node.getAttribute("data-ms")) || 480;
-              var r = boxOf(node);
-              var moveMs = first ? 150 : 260;
-              var settle = first ? 40 : 90;
-              first = false;
-              move(agent, r.x - 6, r.y - 9, moveMs);
-              return wait(agent, settle).then(function () {
-                if (finished) return;
-                node.style.setProperty("--wf-dur", ms + "ms");
-                node.classList.add("is-drawn");
-                move(agent, Math.min(r.right - 9, window.innerWidth - 28), r.y - 9, ms);
-                drawn += 1;
-                setProgress();
-                return wait(agent, ms + 200);
-              });
-            });
-          });
-
-          return chain.then(function () {
-            if (!finished) agent.el.classList.add("is-idle");
-          });
-        }
-
-        Promise.all(agents.map(runAgent))
-          .then(function () {
-            if (finished) return;
-            return new Promise(function (res) {
-              window.setTimeout(res, 560);
-            }).then(function () {
-              if (finished) return;
-              if (document.readyState === "complete") finish();
-              else window.addEventListener("load", finish, { once: true });
-            });
-          })
-          .catch(finish);
 
         window.setTimeout(function () {
           if (!finished) finish();
