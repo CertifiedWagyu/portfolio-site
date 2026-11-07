@@ -802,13 +802,19 @@
         left: 0;
         top: 0;
         z-index: 20;
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
         opacity: 0;
         transform: translate3d(var(--ex, -90px), var(--ey, -90px), 0);
         pointer-events: none;
         will-change: transform, opacity;
         --c: var(--cur-nav);
+      }
+      @media (min-width: 640px) {
+        .wf-cur {
+          width: 28px;
+          height: 28px;
+        }
       }
       .wf-cur[data-agent="frame"] {
         --c: var(--cur-frame);
@@ -834,17 +840,31 @@
       .wf-cur svg path {
         fill: var(--c);
         stroke: var(--paper);
-        stroke-width: 1.3;
+        stroke-width: 1.2;
         stroke-linejoin: round;
+      }
+      .wf-cur .grip {
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
+        border: 1.5px solid var(--c);
+        border-radius: 50%;
+        opacity: 0;
+        transform: scale(0.35);
+        transform-origin: center;
+        pointer-events: none;
       }
       .wf-cur .tag {
         position: absolute;
-        left: 15px;
-        top: 15px;
-        padding: 2px 5px;
+        left: 18px;
+        top: 18px;
+        padding: 3px 6px;
         background: var(--c);
         color: var(--paper);
-        font: 700 7px/1.3 "JetBrains Mono", ui-monospace, monospace;
+        font: 700 8px/1.3 "JetBrains Mono", ui-monospace, monospace;
         letter-spacing: 0.16em;
         text-transform: uppercase;
         white-space: nowrap;
@@ -852,7 +872,17 @@
       }
       .wf-cur.flip .tag {
         left: auto;
-        right: 15px;
+        right: 18px;
+      }
+      @media (min-width: 640px) {
+        .wf-cur .tag {
+          left: 21px;
+          top: 21px;
+        }
+        .wf-cur.flip .tag {
+          left: auto;
+          right: 21px;
+        }
       }
       .wf-cur.is-idle .tag {
         opacity: 0;
@@ -868,10 +898,15 @@
         }
       }
       @keyframes wf-piece-drag {
-        from {
+        0% {
           transform: translate3d(var(--dx, 0px), var(--dy, 0px), 0);
+          animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
         }
-        to {
+        82% {
+          transform: translate3d(var(--ox, 0px), var(--oy, 0px), 0);
+          animation-timing-function: cubic-bezier(0.3, 0, 0.3, 1);
+        }
+        100% {
           transform: translate3d(0, 0, 0);
         }
       }
@@ -892,10 +927,15 @@
         }
       }
       @keyframes wf-cur-drag {
-        from {
+        0% {
           transform: translate3d(var(--sx, 0px), var(--sy, 0px), 0);
+          animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
         }
-        to {
+        82% {
+          transform: translate3d(var(--oxc, 0px), var(--oyc, 0px), 0);
+          animation-timing-function: cubic-bezier(0.3, 0, 0.3, 1);
+        }
+        100% {
           transform: translate3d(var(--hx, 0px), var(--hy, 0px), 0);
         }
       }
@@ -905,6 +945,19 @@
         }
         to {
           transform: translate3d(var(--nx, 0px), var(--ny, 0px), 0);
+        }
+      }
+      @keyframes wf-grip {
+        0% {
+          opacity: 0;
+          transform: scale(0.35);
+        }
+        28% {
+          opacity: 0.95;
+        }
+        100% {
+          opacity: 0;
+          transform: scale(1.9);
         }
       }
       @keyframes wf-cur-out {
@@ -1220,7 +1273,6 @@
         var units = [];
         var vw = window.innerWidth;
         var vh = window.innerHeight;
-        var lastEnd = 0;
         var lastPlace = 0;
         var finished = false;
         var timers = [];
@@ -1244,7 +1296,7 @@
           cursor.setAttribute("data-agent", agent);
           cursor.setAttribute("aria-hidden", "true");
           cursor.innerHTML =
-            '<span class="tag">' + label + '</span><svg viewBox="0 0 20 22" aria-hidden="true"><path d="' + CURSOR_PATH + '" /></svg>';
+            '<span class="grip"></span><span class="tag">' + label + '</span><svg viewBox="0 0 20 22" aria-hidden="true"><path d="' + CURSOR_PATH + '" /></svg>';
           el.appendChild(cursor);
           return cursor;
         }
@@ -1261,50 +1313,81 @@
 
           var agent = node.getAttribute("data-agent") || "copy";
           var label = node.getAttribute("data-label") || agent;
+          var full = r.width > vw * 0.72;
           var dx;
           var dy;
-          if (r.width > vw * 0.72) {
+          if (full) {
             dx = 0;
-            dy = r.top < vh * 0.5 ? -30 : 26;
+            dy = r.top < vh * 0.5 ? 30 : -30;
           } else {
-            dx = r.left + r.width / 2 > vw * 0.55 ? 46 : -34;
-            dy = 24 + (index % 4) * 8;
+            dx = r.left + r.width / 2 > vw * 0.55 ? 92 : -78;
+            dy = 46 + (index % 4) * 10;
             if (r.width > 500 && r.height > 90) {
               dx *= 1.15;
-              dy += 6;
+              dy += 12;
             }
           }
 
-          var grabX = Math.min(r.width - 12, Math.max(16, r.width * (r.width > 340 ? 0.28 : 0.42)));
-          var grabY = Math.min(r.height - 8, Math.max(14, r.height * (r.height > 84 ? 0.42 : 0.62)));
+          var grabX;
+          if (full) {
+            grabX = r.width * (r.top < vh * 0.5 ? 0.36 : 0.62);
+          } else if (dx > 0) {
+            grabX = 14;
+          } else {
+            grabX = r.width - 14;
+          }
+          grabX = Math.min(r.width - 12, Math.max(12, grabX));
+          var grabY = dy > 0 ? 13 : r.height - 13;
+          grabY = Math.min(r.height - 12, Math.max(12, grabY));
+
           var holdX = r.left + grabX;
           var holdY = r.top + grabY;
-          var delay = 100 + index * 46 + ((index * 17) % 29);
-          var drag = Math.max(190, Math.min(340, Math.round((Number(node.getAttribute("data-ms")) || 480) * 0.42)));
-          var grabAt = delay + 104;
-          var placeAt = grabAt + drag + 20;
-          var outAt = placeAt + 80;
+          var len = Math.sqrt(dx * dx + dy * dy) || 1;
+          var extra = full ? 34 : 58;
+          var enterX = holdX + dx + (dx / len) * extra;
+          var enterY = holdY + dy + (dy / len) * extra;
+          var overX = -dx * 0.06;
+          var overY = -dy * 0.06;
+          var leaveX = (-dx / len) * 28;
+          var leaveY = (-dy / len) * 28;
+          var delay = 100 + index * 50 + ((index * 23) % 31);
+          var drag = Math.max(320, Math.min(480, Math.round((Number(node.getAttribute("data-ms")) || 480) * 0.65)));
+          var grabAt = delay + 170;
+          var placeAt = grabAt + drag;
+          var releaseAt = placeAt + 120;
+          var outAt = placeAt + 150;
           var cursor = addCursor(label, agent);
 
-          cursor.classList.toggle("flip", holdX > vw - 150);
-          cursor.style.setProperty("--ex", holdX + dx * 0.55 + "px");
-          cursor.style.setProperty("--ey", holdY + dy * 0.55 + "px");
+          cursor.classList.toggle("flip", holdX > vw - 170);
+          cursor.style.setProperty("--ex", enterX + "px");
+          cursor.style.setProperty("--ey", enterY + "px");
           cursor.style.setProperty("--sx", holdX + dx + "px");
           cursor.style.setProperty("--sy", holdY + dy + "px");
           cursor.style.setProperty("--hx", holdX + "px");
           cursor.style.setProperty("--hy", holdY + "px");
-          cursor.style.setProperty("--nx", holdX + dx * 0.12 + "px");
-          cursor.style.setProperty("--ny", holdY + dy * 0.12 + "px");
+          cursor.style.setProperty("--oxc", holdX + overX + "px");
+          cursor.style.setProperty("--oyc", holdY + overY + "px");
+          cursor.style.setProperty("--nx", holdX + leaveX + "px");
+          cursor.style.setProperty("--ny", holdY + leaveY + "px");
           cursor.style.animationName = "wf-cur-in,wf-cur-grab,wf-cur-drag,wf-cur-nudge,wf-cur-out";
-          cursor.style.animationDuration = "70ms,100ms," + drag + "ms,110ms,160ms";
-          cursor.style.animationDelay = delay + "ms," + delay + "ms," + grabAt + "ms," + placeAt + "ms," + outAt + "ms";
+          cursor.style.animationDuration = "90ms,170ms," + drag + "ms,180ms,280ms";
+          cursor.style.animationDelay = delay + "ms," + delay + "ms," + grabAt + "ms," + releaseAt + "ms," + outAt + "ms";
           cursor.style.animationTimingFunction =
-            "linear,cubic-bezier(0.3,0,0.4,1)," + EASE + ",cubic-bezier(0.3,0,0.3,1),linear";
+            "linear,cubic-bezier(0.2,0.7,0.2,1)," + EASE + ",cubic-bezier(0.25,0,0.3,1),linear";
           cursor.style.animationFillMode = "forwards,forwards,forwards,forwards,forwards";
 
           var tag = cursor.querySelector(".tag");
           if (tag) {
-            tag.style.animation = "wf-tag-out 130ms linear " + (placeAt + 40) + "ms forwards";
+            tag.style.animation = "wf-tag-out 170ms linear " + (placeAt + 60) + "ms forwards";
+          }
+          var grip = cursor.querySelector(".grip");
+          if (grip) {
+            grip.style.animation =
+              "wf-grip 300ms cubic-bezier(0.2,0,0.2,1) " +
+              grabAt +
+              "ms forwards, wf-grip 280ms cubic-bezier(0.2,0,0.2,1) " +
+              (placeAt + 30) +
+              "ms forwards";
           }
 
           cursor.addEventListener("animationend", function (ev) {
@@ -1313,9 +1396,11 @@
 
           node.style.setProperty("--dx", dx + "px");
           node.style.setProperty("--dy", dy + "px");
+          node.style.setProperty("--ox", overX + "px");
+          node.style.setProperty("--oy", overY + "px");
           node.style.animationName = "wf-piece-in,wf-piece-drag";
-          node.style.animationDuration = "110ms," + drag + "ms";
-          node.style.animationDelay = delay + 58 + "ms," + grabAt + "ms";
+          node.style.animationDuration = "180ms," + drag + "ms";
+          node.style.animationDelay = delay + 20 + "ms," + grabAt + "ms";
           node.style.animationTimingFunction = "linear," + EASE;
           node.style.animationFillMode = "forwards,forwards";
           node.style.willChange = "transform, opacity";
@@ -1329,15 +1414,13 @@
             cursor: cursor,
             drag: drag,
             placeAt: placeAt,
-            end: outAt + 160,
           });
 
-          lastEnd = Math.max(lastEnd, outAt + 160);
           lastPlace = Math.max(lastPlace, placeAt);
         });
 
         if (bar) {
-          bar.style.animation = "wf-progress " + Math.max(280, lastPlace) + "ms linear forwards";
+          bar.style.animation = "wf-progress " + Math.max(400, lastPlace) + "ms linear forwards";
         }
 
         if (!units.length) {
@@ -1347,7 +1430,7 @@
 
         later(function () {
           if (!finished) finish();
-        }, lastEnd + 260);
+        }, lastPlace + 300);
 
         function finish() {
           if (finished) return;
@@ -1371,6 +1454,11 @@
             if (tag) {
               tag.style.animation = "none";
               tag.style.opacity = "0";
+            }
+            var grip = u.cursor.querySelector(".grip");
+            if (grip) {
+              grip.style.animation = "none";
+              grip.style.opacity = "0";
             }
           });
           if (bar) {
