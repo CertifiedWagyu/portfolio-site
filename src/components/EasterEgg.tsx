@@ -31,10 +31,21 @@ export const OPEN_SECRET_EVENT = "site:open-secret";
 export function EasterEgg() {
   const [whisper, setWhisper] = useState(false);
   const [scare, setScare] = useState(false);
+  const [scareRun, setScareRun] = useState(0);
+  const [scareSrc, setScareSrc] = useState(SCARE_SRC);
   const clicks = useRef<number[]>([]);
   const seq = useRef(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const scareTimer = useRef<number | null>(null);
+  const gifBlob = useRef<Blob | null>(null);
+  const scareUrl = useRef<string | null>(null);
+
+  const releaseScareUrl = useCallback(() => {
+    if (scareUrl.current) {
+      URL.revokeObjectURL(scareUrl.current);
+      scareUrl.current = null;
+    }
+  }, []);
 
   const setTriggerState = useCallback((hint: boolean) => {
     document.querySelectorAll<HTMLElement>(TRIGGER).forEach((el) => {
@@ -53,7 +64,18 @@ export function EasterEgg() {
     }
 
     /* Jump-scare: one-shot GIF over the whole page + scream, same instant.
-       Nothing else opens afterwards; the scare is the whole payload. */
+       Nothing else opens afterwards; the scare is the whole payload.
+       Browsers keep a cached GIF frozen after its single pass, so every
+       trigger gets a brand-new blob URL that decodes and animates fresh. */
+    releaseScareUrl();
+    if (gifBlob.current) {
+      const url = URL.createObjectURL(gifBlob.current);
+      scareUrl.current = url;
+      setScareSrc(url);
+    } else {
+      setScareSrc(SCARE_SRC);
+    }
+    setScareRun((run) => run + 1);
     setScare(true);
     const audio = audioRef.current;
     if (audio) {
@@ -68,15 +90,27 @@ export function EasterEgg() {
       }
     }
     if (scareTimer.current) window.clearTimeout(scareTimer.current);
-    scareTimer.current = window.setTimeout(() => setScare(false), SCARE_MS);
-  }, [setTriggerState]);
+    scareTimer.current = window.setTimeout(() => {
+      setScare(false);
+      releaseScareUrl();
+    }, SCARE_MS);
+  }, [releaseScareUrl, setTriggerState]);
 
-  /* Warm the payload so the GIF starts on the same frame as the scream. */
+  /* Fetch the GIF once; every scare makes a fresh blob URL from these bytes. */
   useEffect(() => {
-    const img = new Image();
-    img.src = SCARE_SRC;
+    let alive = true;
+    fetch(SCARE_SRC)
+      .then((res) => (res.ok ? res.blob() : null))
+      .then((blob) => {
+        if (alive && blob) gifBlob.current = blob;
+      })
+      .catch(() => {
+        /* fall back to the plain URL */
+      });
     return () => {
+      alive = false;
       if (scareTimer.current) window.clearTimeout(scareTimer.current);
+      if (scareUrl.current) URL.revokeObjectURL(scareUrl.current);
     };
   }, []);
 
@@ -184,11 +218,12 @@ export function EasterEgg() {
 
       {scare && (
         <div
+          key={scareRun}
           className="fnaf-scare fixed inset-0 z-[120] overflow-hidden bg-black/30"
           aria-hidden="true"
         >
           <img
-            src={SCARE_SRC}
+            src={scareSrc}
             alt=""
             draggable={false}
             className="h-full w-full select-none object-cover"
