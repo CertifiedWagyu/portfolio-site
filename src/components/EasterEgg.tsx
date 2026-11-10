@@ -24,18 +24,15 @@ const SCREAM_SRC = "/fnaf-foxy-scream.mp3";
 /** The scream is 1.7s; keep the one-shot GIF on screen until it finishes. */
 const SCARE_MS = 1780;
 
-/** Fired by any element that should reveal the payload in one click. */
+/** Fired by any element that should trigger the secret jump-scare. */
 export const OPEN_SECRET_EVENT = "site:open-secret";
 
-/** Hidden image payload revealed by the monogram or the Konami code. */
+/** Foxy jump-scare + scream revealed by the monogram, Konami code or footer signal. */
 export function EasterEgg() {
-  const [open, setOpen] = useState(false);
-  const [armed, setArmed] = useState(false);
   const [whisper, setWhisper] = useState(false);
   const [scare, setScare] = useState(false);
   const clicks = useRef<number[]>([]);
   const seq = useRef(0);
-  const closeRef = useRef<HTMLButtonElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const scareTimer = useRef<number | null>(null);
 
@@ -48,7 +45,6 @@ export function EasterEgg() {
   const reveal = useCallback(() => {
     clicks.current = [];
     seq.current = 0;
-    setArmed(false);
     setTriggerState(false);
     try {
       window.localStorage.setItem(FOUND_KEY, "1");
@@ -57,13 +53,13 @@ export function EasterEgg() {
     }
 
     /* Jump-scare: one-shot GIF over the whole page + scream, same instant.
-       The classified payload opens once the scream has finished. */
+       Nothing else opens afterwards; the scare is the whole payload. */
     setScare(true);
     const audio = audioRef.current;
     if (audio) {
       try {
         audio.currentTime = 0;
-        audio.volume = 0.85;
+        audio.volume = 1;
         void audio.play().catch(() => {
           /* sound blocked; the GIF still plays */
         });
@@ -72,10 +68,7 @@ export function EasterEgg() {
       }
     }
     if (scareTimer.current) window.clearTimeout(scareTimer.current);
-    scareTimer.current = window.setTimeout(() => {
-      setScare(false);
-      setOpen(true);
-    }, SCARE_MS);
+    scareTimer.current = window.setTimeout(() => setScare(false), SCARE_MS);
   }, [setTriggerState]);
 
   /* Warm the payload so the GIF starts on the same frame as the scream. */
@@ -111,7 +104,6 @@ export function EasterEgg() {
         return;
       }
       const hint = clicks.current.length >= CLICK_HINT;
-      setArmed(hint);
       setTriggerState(hint);
     };
 
@@ -174,26 +166,11 @@ export function EasterEgg() {
     return () => window.removeEventListener(OPEN_SECRET_EVENT, onOpen);
   }, [reveal]);
 
-  useEffect(() => {
-    if (!open) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    closeRef.current?.focus();
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
-
   return (
     <>
       <audio ref={audioRef} src={SCREAM_SRC} preload="auto" aria-hidden="true" />
 
-      {!open && !scare && whisper && (
+      {!scare && whisper && (
         <button
           type="button"
           onClick={() => setWhisper(false)}
@@ -216,51 +193,6 @@ export function EasterEgg() {
             draggable={false}
             className="h-full w-full select-none object-cover"
           />
-        </div>
-      )}
-
-      {open && (
-        <div
-          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/85 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Classified payload"
-          onClick={(event) => {
-            if (event.target === event.currentTarget) setOpen(false);
-          }}
-        >
-          <div className="relative w-full max-w-2xl border-2 border-coal bg-card p-3 shadow-[10px_10px_0_0_var(--color-ember)] sm:p-5">
-            <div className="flex items-center justify-between gap-3 border-b-2 border-coal pb-3">
-              <span className="flex items-center gap-2 font-mono text-[9px] font-bold uppercase tracking-[0.26em] text-ember">
-                <span className="h-1.5 w-1.5 bg-ember" aria-hidden="true" />
-                Signal acquired
-              </span>
-              <span className="font-mono text-[9px] uppercase tracking-[0.22em] text-latte">
-                Classified // eyes only
-              </span>
-            </div>
-            <div className="relative mt-3 overflow-hidden border-2 border-coal bg-cream">
-              <img
-                src="/secret-easter-egg.png"
-                alt="Classified Easter egg payload"
-                className="mx-auto max-h-[62vh] w-auto object-contain"
-              />
-            </div>
-            <div className="flex items-center justify-between gap-4 border-t-2 border-coal pt-3">
-              <p className="font-mono text-[9px] uppercase tracking-[0.22em] text-fawn">
-                Unauthorized observer detected
-              </p>
-              <button
-                ref={closeRef}
-                type="button"
-                onClick={() => setOpen(false)}
-                className="border-2 border-coal bg-coal px-4 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-parchment transition-colors hover:bg-ember"
-              >
-                Close
-              </button>
-            </div>
-            {armed && <span className="sr-only">Secret almost unlocked</span>}
-          </div>
         </div>
       )}
     </>
