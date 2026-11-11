@@ -1,9 +1,9 @@
-import stocking from "../assets/stocking-cut.webp";
+import intruder from "../assets/intruder-cut.png";
 import { OPEN_SECRET_EVENT } from "./EasterEgg";
 
 /**
- * Stocking, cut clean from the page art. Pinned bottom-right so she rides
- * along with the scroll; one click opens the classified payload.
+ * A hooded intruder hiding in the bottom-right corner. Deliberately tiny so
+ * it reads as a secret; one click starts the jump-scare.
  */
 export function SecretMascot() {
   const openSecret = () => {
@@ -22,16 +22,16 @@ export function SecretMascot() {
         <button
           type="button"
           onClick={openSecret}
-          aria-label="Open the secret image"
-          className="stocking-btn pointer-events-auto block cursor-pointer bg-transparent p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
+          aria-label="Open the secret"
+          className="stocking-btn pointer-events-auto block cursor-pointer bg-transparent p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ember"
         >
           <img
-            src={stocking}
+            src={intruder}
             alt=""
-            width={408}
-            height={1026}
+            width={245}
+            height={259}
             draggable={false}
-            className="stocking-art block h-[54px] w-auto select-none sm:h-[74px]"
+            className="stocking-art block h-[22px] w-auto select-none sm:h-[28px]"
           />
         </button>
       </div>

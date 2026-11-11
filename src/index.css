@@ -348,13 +348,13 @@
 
 .stocking-art {
   transform-origin: 50% 100%;
-  filter: drop-shadow(2px 2px 0 rgba(9, 9, 11, 0.85));
+  filter: drop-shadow(1px 1px 0 rgba(9, 9, 11, 0.85));
   animation: stocking-bob 5.2s ease-in-out infinite;
 }
 
 .stocking-btn:hover .stocking-art,
 .stocking-btn:focus-visible .stocking-art {
-  filter: drop-shadow(3px 4px 0 rgba(9, 9, 11, 0.9));
+  filter: drop-shadow(2px 2px 0 rgba(9, 9, 11, 0.9));
 }
 
 .stocking-bubble {
@@ -377,7 +377,7 @@
     transform: translateY(0) rotate(-0.5deg);
   }
   50% {
-    transform: translateY(-3px) rotate(0.5deg);
+    transform: translateY(-2px) rotate(0.5deg);
   }
 }
 
