@@ -36,6 +36,7 @@ const inputClasses =
 
 export function Contact({ email }: { email: string }) {
   const [copied, setCopied] = useState(false);
+  const [copiedSocial, setCopiedSocial] = useState<string | null>(null);
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formMessage, setFormMessage] = useState("");
@@ -53,6 +54,22 @@ export function Contact({ email }: { email: string }) {
     }
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copySocialHandle = async (key: string, handle: string) => {
+    const value = handle.replace(/^@/, "");
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = value;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    setCopiedSocial(key);
+    window.setTimeout(() => setCopiedSocial(null), 2000);
   };
 
   return (
@@ -181,32 +198,52 @@ export function Contact({ email }: { email: string }) {
       <div className="grid gap-0 sm:grid-cols-2 xl:grid-cols-4">
         {socials
           .filter((s) => s.key !== "email")
-          .map((s, i) => (
-            <Reveal key={s.key} delay={i * 70} className="h-full">
-              <Tilt className="h-full" max={4}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group flex h-full items-center gap-4 border-2 border-coal bg-card p-4 transition-colors hover:bg-cream ${
-                    i > 0 ? "sm:-ml-0.5" : ""
-                  }`}
-                >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-coal bg-coal text-parchment transition-colors group-hover:bg-ember group-hover:text-parchment">
-                    {ICONS[s.key]}
+          .map((s, i) => {
+            const cardClass = `group flex h-full w-full items-center gap-4 border-2 border-coal bg-card p-4 text-left transition-colors hover:bg-cream ${
+              i > 0 ? "sm:-ml-0.5" : ""
+            }`;
+            const body = (
+              <>
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-coal bg-coal text-parchment transition-colors group-hover:bg-ember group-hover:text-parchment">
+                  {ICONS[s.key]}
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-latte">
+                    {s.label}
                   </span>
-                  <span className="min-w-0">
-                    <span className="block font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-latte">
-                      {s.label}
-                    </span>
-                    <span className="mt-0.5 block truncate text-sm font-semibold text-coal">
-                      {s.handle}
-                    </span>
+                  <span className="mt-0.5 block truncate text-sm font-semibold text-coal">
+                    {!s.href && copiedSocial === s.key ? "Copied!" : s.handle}
                   </span>
-                </a>
-              </Tilt>
-            </Reveal>
-          ))}
+                </span>
+              </>
+            );
+            return (
+              <Reveal key={s.key} delay={i * 70} className="h-full">
+                <Tilt className="h-full" max={4}>
+                  {s.href ? (
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cardClass}
+                    >
+                      {body}
+                    </a>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => void copySocialHandle(s.key, s.handle)}
+                      title={`Copy ${s.handle}`}
+                      aria-label={`Copy ${s.label} username ${s.handle}`}
+                      className={`${cardClass} cursor-pointer`}
+                    >
+                      {body}
+                    </button>
+                  )}
+                </Tilt>
+              </Reveal>
+            );
+          })}
       </div>
     </Section>
   );

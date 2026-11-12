@@ -73,25 +73,26 @@ export const socials: readonly Social[] = [
   {
     key: "github",
     label: "GitHub",
-    handle: "@your-handle",
-    href: "https://github.com/your-handle",
+    handle: "@CertifiedWagyu",
+    href: "https://github.com/CertifiedWagyu",
   },
   {
     key: "twitter",
     label: "Twitter",
-    handle: "@your-handle",
-    href: "https://twitter.com/your-handle",
+    handle: "@DelmartAsensi",
+    href: "https://twitter.com/DelmartAsensi",
   },
   {
     key: "roblox",
     label: "Roblox",
-    handle: "@yourusername",
-    href: "https://www.roblox.com/users/1/profile",
+    handle: "@dalmart2",
+    href: "https://www.roblox.com/users/10213774466/profile",
   },
   {
     key: "discord",
     label: "Discord",
-    handle: "@yourname",
-    href: "https://discord.com/users/000000000000000000",
+    handle: "@senlikesfumo",
+    /* Discord profiles only resolve by numeric ID, so this card copies the handle. */
+    href: "",
   },
 ];
